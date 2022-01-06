@@ -87,38 +87,54 @@ layui.define(['laytpl', 'layer'], function(exports){
       type: 'get'
       ,dataType: 'json'
       ,success: function(res){
-        var statusCode = response.statusCode;
+        debugger
+        //var statusCode = response.statusCode;
         
         //只有 response 的 code 一切正常才执行 done
-        if(res[response.statusName] == statusCode.ok) {
+        //if(res[response.statusName] == statusCode.ok) {
           typeof options.done === 'function' && options.done(res); 
-        } 
+        //} 
         
         //登录状态失效，清除本地 access_token，并强制跳转到登入页
-        else if(res[response.statusName] == statusCode.logout){
-          view.exit();
-        }
+        // else if(res[response.statusName] == statusCode.logout){
+        //   view.exit();
+        // }
         
         //其它异常
-        else {
-          var errorText = [
-            '<cite>Error：</cite> ' + (res[response.msgName] || '返回状态码异常')
-            ,debug()
-          ].join('');
-          view.error(errorText);
-        }
+        // else {
+        //   var errorText = [
+        //     '<cite>Error：</cite> ' + (res[response.msgName] || '返回状态码异常')
+        //     ,debug()
+        //   ].join('');
+        //   view.error(errorText);
+        // }
         
         //只要 http 状态码正常，无论 response 的 code 是否正常都执行 success
         typeof success === 'function' && success(res);
       }
       ,error: function(e, code){
-        var errorText = [
-          '请求异常，请重试<br><cite>错误信息：</cite>'+ code 
-          ,debug()
-        ].join('');
-        view.error(errorText);
-        
-        typeof error === 'function' && error.apply(this, arguments);
+        debugger
+        //登录状态失效，清除本地 access_token，并强制跳转到登入页
+        if(e.status == response.statusCode.logout){
+          view.exit();
+        } else if(e.status == response.statusCode.error){
+          var errorText = [
+            '请求异常，请重试<br><cite>错误信息：</cite>'+ code 
+            ,debug()
+          ].join('');
+          view.error(errorText);
+
+          typeof error === 'function' && error.apply(this, arguments);
+        } else {
+          var errorText = [
+            '<cite>Error：</cite> ' + (e.responseJSON[response.msgName] || '返回状态码异常')
+            ,debug()
+          ].join('');
+          view.error(errorText);
+
+          typeof success === 'function' && success(e.responseJSON);
+        }
+      
       }
     }, options));
   };

@@ -15,30 +15,33 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     ,name: 'layuiAdmin'
     ,tableName: 'layuiAdmin' //本地存储表名
     ,MOD_NAME: 'admin' //模块事件名
+
+    ,ip: 'http://www.yanlei-thinkphp.com' //域名
     
     ,debug: true //是否开启调试模式。如开启，接口异常时会抛出异常 URL 等信息
     
-    ,interceptor: false //是否开启未登入拦截
+    ,interceptor: true //是否开启未登入拦截
     
     //自定义请求字段
     ,request: {
-      tokenName: 'token' //自动携带 token 的字段名。可设置 false 不携带。
+      tokenName: 'Authorization' //自动携带 token 的字段名。可设置 false 不携带。
     }
     
     //自定义响应字段
     ,response: {
       statusName: 'code' //数据状态的字段名称
       ,statusCode: {
-        ok: 0 //数据状态一切正常的状态码
-        ,logout: 1001 //登录状态失效的状态码
+        ok: 200 //数据状态一切正常的状态码
+        ,logout: 401 //登录状态失效的状态码
+        //,error: 500 //数据异常的状态码
       }
-      ,msgName: 'msg' //状态信息的字段名称
+      ,msgName: 'message' //状态信息的字段名称
       ,dataName: 'data' //数据详情的字段名称
     }
     
     //独立页面路由，可随意添加（无需写参数）
     ,indPage: [
-      '/user/login' //登入页
+      '/login/login' //登入页
     ]
     
     //扩展的模块（相对于 lib/extend 目录）
