@@ -104,7 +104,6 @@
       ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
       ,field: 'file' //设定文件域的字段名，默认file
       ,done: function(res){ //上传后的回调
-        //debugger
         if(res.code == 200){
           $(this.item).prev("div").children("input").val(res.data.url);
         }

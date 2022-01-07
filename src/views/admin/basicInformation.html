@@ -1,0 +1,149 @@
+
+<title>基本资料</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>基本资料</cite></a>
+  </div>
+</div>
+  
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">基本资料</div>
+        <div class="layui-card-body" pad15>
+          
+            <div id="view"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+<div class="layui-form" lay-filter="LAY-form-id">
+    <div class="layui-form-item">
+    <label class="layui-form-label">邮箱账号</label>
+    <div class="layui-input-inline">
+        <input type="text" name="email" value="{{ d.email || '' }}" lay-verify="email" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">昵称</label>
+    <div class="layui-input-inline">
+        <input type="text" name="nickname" value="{{ d.nickname || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">姓名</label>
+    <div class="layui-input-inline">
+        <input type="text" name="name" value="{{ d.name || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">电话</label>
+    <div class="layui-input-inline">
+        <input type="text" name="mobile" value="{{ d.mobile || '' }}" lay-verify="phone" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">头像</label>
+    <div class="layui-input-inline">
+        <input type="text" name="avatar" value="{{ d.avatar || '' }}" lay-verify="required" placeholder="请上传" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+    </div>
+    <div class="layui-input-inline layui-btn-container" style="width: auto;">
+      <button type="button" class="layui-btn layui-btn-primary" id="avatar"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+      <button class="layui-btn layui-btn-primary" id="showAvatar" data-avatar="{{ d.avatar || '' }}">查看图片</button >
+    </div>
+    <div class="layui-form-item">
+    <div class="layui-input-block">
+        <button class="layui-btn" lay-submit lay-filter="LAY-form-submit">确认</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+    </div>
+</div>
+</script>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload'], function(setter, admin, view, table, form, laytpl, upload){
+  //加载jquery
+  let $ = layui.$; 
+
+  //获取管理员信息
+  admin.req({
+    url: layui.setter.ip + '/admin/admin/info' //实际使用请改成服务端真实接口
+    ,type: 'get'
+    ,data: {}
+    ,done: function(res){
+        //获取模版
+        let getTpl = tpl.innerHTML;
+        //把数据放进模版里
+        laytpl(getTpl).render(res.data, function(html) {
+            //把模版放进视图里
+            $('#view').html(html);
+        });
+        //表单渲染
+        form.render(null, 'LAY-form-id');
+        //layer.msg(res.message);
+
+        //上传头像
+        upload.render({
+            elem: '#avatar'
+            ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+            ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+            //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+            ,method: 'post'  //设定HTTP类型，默认post
+            ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+            ,field: 'file' //设定文件域的字段名，默认file
+            ,done: function(res){ //上传后的回调
+                if(res.code == 200){
+                    $(this.item).parent().prev("div").children("input").val(res.data.url);
+                }
+                layer.msg(res.message);
+            }
+        });
+
+        //查看头像
+        $('#showAvatar').on('click', function(){
+            let src = $(this).data('avatar');
+            layer.photos({
+                photos: {
+                "title": "查看头像" //相册标题
+                ,"data": [{
+                    "src": src //原图地址
+                }]
+                }
+                ,shade: 0.01
+                ,closeBtn: 1
+                ,anim: 5
+            });
+        });
+
+    }
+  });
+
+  //开启提交
+  form.on('submit(LAY-form-submit)', function(data){
+    let field = data.field; //获取提交的字段
+    //提交 Ajax 成功后，关闭当前弹层并重载表格
+    admin.req({
+      url: layui.setter.ip + '/admin/admin/editMyProfile' //实际使用请改成服务端真实接口
+      ,type: 'post'
+      ,data: field
+      ,done: function(res){
+        layer.msg(res.message);
+        //刷新当前右侧区域
+        admin.events.refresh();
+      }
+    });
+  });
+  
+  
+
+
+
+})
+</script>

@@ -56,8 +56,6 @@ layui.use(['setter', 'admin', 'form', 'tree'], function(setter, admin, form, tre
           });
           let rules = role ? role.rules : '';
           rules = rules.split(',');
-          debugger
-          // todo 没有勾选上数据
           tree.setChecked('LAY-tree-id', rules); //批量勾选
           layer.msg(res.message);
       }

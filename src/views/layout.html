@@ -23,9 +23,6 @@
           <i class="layui-icon layui-icon-refresh-3"></i>
         </a>
       </li>
-      <li class="layui-nav-item layui-hide-xs" lay-unselect>
-        <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search/keywords="> 
-      </li>
     </ul>
     <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
       <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -50,8 +47,8 @@
             <cite>{{ d.data.nickname }}</cite>
           </a>
           <dl class="layui-nav-child">
-            <dd><a lay-href="">基本资料</a></dd>
-            <dd><a lay-href="">修改密码</a></dd>
+            <dd><a lay-href="/admin/basicInformation">基本资料</a></dd>
+            <dd><a lay-href="/admin/changePassword">修改密码</a></dd>
             <hr>
             <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
           </dl>
