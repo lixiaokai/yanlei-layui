@@ -1,0 +1,124 @@
+
+<title>系统设置</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>系统设置</cite></a>
+  </div>
+</div>
+  
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">系统设置</div>
+        <div class="layui-card-body" pad15>
+          
+            <div id="view"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+<div class="layui-form" lay-filter="LAY-form-id">
+    <div class="layui-form-item">
+    <label class="layui-form-label">网站名称</label>
+    <div class="layui-input-inline">
+        <input type="text" name="site_name" value="{{ d.site_name || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">网站图标</label>
+    <div class="layui-input-inline">
+        <input type="text" name="site_icon" value="{{ d.site_icon || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">网站版权</label>
+    <div class="layui-input-inline">
+        <input type="text" name="site_copyright" value="{{ d.site_copyright || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">网站详情</label>
+    <div class="layui-input-block">
+        <textarea id="site_detail" style="display: none;">{{ d.site_detail || '' }}</textarea>
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <div class="layui-input-block">
+        <button class="layui-btn" lay-submit lay-filter="LAY-form-submit">确认</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+    </div>
+</div>
+</script>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'layedit'], function(setter, admin, view, table, form, laytpl, upload, layedit){
+  //加载jquery
+  let $ = layui.$;
+  let site_detail;
+
+  //注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
+  layedit.set({
+    height: '200px' //设定编辑器的初始高度
+    ,uploadImage: {
+      url: setter.ip + '/admin/storage/uploadByLayEdit' //实际使用请改成服务端真实接口
+      ,type: 'post' //默认post
+    }
+  });
+
+  //获取系统设置信息
+  admin.req({
+    url: layui.setter.ip + '/admin/systemSetup/info' //实际使用请改成服务端真实接口
+    ,type: 'get'
+    ,data: {}
+    ,done: function(res){
+        //获取模版
+        let getTpl = tpl.innerHTML;
+        //把数据放进模版里
+        laytpl(getTpl).render(res.data, function(html) {
+            //把模版放进视图里
+            $('#view').html(html);
+        });
+        //layer.msg(res.message);
+
+        //建立编辑器
+        site_detail = layedit.build('site_detail');
+
+        //重置表单
+        $('button[type="reset"]').on('click', function(){
+            $('input').val('');
+        });
+
+    }
+  });
+
+  //开启提交
+  form.on('submit(LAY-form-submit)', function(data){
+    let field = data.field; //获取提交的字段
+    field['site_detail'] = layedit.getContent(site_detail); //追加site_detail字段
+    //提交 Ajax 成功后，关闭当前弹层并重载表格
+    admin.req({
+      url: layui.setter.ip + '/admin/systemSetup/edit' //实际使用请改成服务端真实接口
+      ,type: 'post'
+      ,data: field
+      ,done: function(res){
+        layer.msg(res.message);
+        //刷新当前右侧区域
+        admin.events.refresh();
+      }
+    });
+  });
+  
+  
+
+
+
+})
+</script>

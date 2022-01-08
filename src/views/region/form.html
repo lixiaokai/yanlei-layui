@@ -1,0 +1,54 @@
+
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">父级地区</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>          
+          <select name="pid" lay-verify="required">
+            <option value="0">请选择</option>
+          </select>  
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">名称</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="name" value="{{ d.params.name || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <div class="layui-input-inline">
+        <input type="button" lay-submit lay-filter="LAY-form-submit" value="确认" class="layui-btn">
+      </div>
+    </div>
+</div>
+  
+<script>
+layui.use(['setter', 'admin', 'form', 'tree'], function(setter, admin, form, tree){
+  //加载jquery
+  let $ = layui.$; 
+
+  //获取 localStorage
+  let region = layui.data(setter.tableName).region;
+
+  //获取父级地区
+  admin.req({
+        url: setter.ip + '/admin/region/pid' //实际使用请改成服务端真实接口
+        ,type: 'get'
+        ,data: {}
+        ,done: function(res){
+            $.each(res.data, function (index, item) {
+              $('select[name="pid"]').append(`<option value="${index}" ${(region && index == region.pid) ? 'selected' : ''}>${item}</option>`);
+            });
+            form.render('select', 'LAY-form-id'); //更新select选择框渲染
+            layer.msg(res.message);
+        }
+  });
+
+
+})
+</script>

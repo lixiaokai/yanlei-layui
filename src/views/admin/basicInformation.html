@@ -68,7 +68,7 @@
 </script>
 
 <script>
-layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload'], function(setter, admin, view, table, form, laytpl, upload){
+layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'layedit'], function(setter, admin, view, table, form, laytpl, upload, layedit){
   //加载jquery
   let $ = layui.$; 
 
@@ -121,6 +121,11 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload'], func
                 ,anim: 5
             });
         });
+
+        //重置表单
+        $('button[type="reset"]').on('click', function(){
+            $('input').val(''); 
+        }); 
 
     }
   });
