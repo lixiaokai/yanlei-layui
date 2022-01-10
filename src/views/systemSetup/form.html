@@ -109,9 +109,8 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
       ,type: 'post'
       ,data: field
       ,done: function(res){
+        admin.events.refresh(); //刷新当前右侧区域
         layer.msg(res.message);
-        //刷新当前右侧区域
-        admin.events.refresh();
       }
     });
   });
