@@ -1,6 +1,10 @@
 LayuiAdmin 1.7.2
 ===============
 
+## 截图
+
+![image](https://octocat.github.io/8186664/51449312-6cc17c00-1d66-11e9-9ec2-33e0ed703af9.png)
+
 ## 关于
 
 一款用于开发各类管理系统的通用型纯静态 UI 界面模板
@@ -27,4 +31,4 @@ step3：切换到该项目根目录（即 gulpfile.js 所在目录），命令�
 
 如果你觉得这个项目有用，你可以给作者买一杯果汁🍹
 
-![image](https://github.com/white1022/yanlei-doc/image/donate.jpg)
+![image](https://white1022.github.io/image/donate.jpg)
