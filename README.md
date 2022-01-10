@@ -1,9 +1,9 @@
 LayuiAdmin 1.7.2
 ===============
 
-## 截图
+## 预览图
 
-![image](https://octocat.github.io/8186664/51449312-6cc17c00-1d66-11e9-9ec2-33e0ed703af9.png)
+![image](https://white1022.github.io/image/preview.png)
 
 ## 关于
 
