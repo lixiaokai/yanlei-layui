@@ -1,0 +1,85 @@
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户昵称</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" value="{{ d.params.user.nickname || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户手机号</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" value="{{ d.params.user.mobile || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+          </script>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">图片</label>
+        <div class="layui-input-inline">
+          <div id="image"></div>
+        </div>
+      </div>
+      <div class="layui-form-item">
+      <label class="layui-form-label">内容</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <textarea class="layui-textarea layui-disabled" readonly="readonly" style="border: none;">{{ d.params.content || '' }}</textarea>
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="radio" name="status" value="1" title="已处理" {{ d.params.status === 1 ? 'checked' : '' }}>
+          <input type="radio" name="status" value="2" title="未处理" {{ d.params.status === 2 ? 'checked' : '' }}>
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <div class="layui-input-inline">
+        <input type="button" lay-submit lay-filter="LAY-form-submit" value="确认" class="layui-btn">
+      </div>
+    </div>
+</div>
+  
+<script>
+layui.use(['setter', 'admin', 'form'], function(setter, admin, form){
+  //加载jquery
+  let $ = layui.$; 
+
+  //获取 localStorage
+  let feedback = layui.data(setter.tableName).feedback;
+
+  if(feedback && feedback.image){
+    let image = feedback.image.split(',');
+    $.each(image, function (index, item) {
+        $('#image').append(`<img class="image" style="display: inline-block; width: 50%; height: 100%;" src="${setter.ip + item}" >`);
+    });
+  }
+
+  //查看图片
+  $('img.image').on('click', function(){
+        let src = $(this).attr('src');
+        layer.photos({
+            photos: {
+            "title": "查看图片" //相册标题
+            ,"data": [{
+                "src": src //原图地址
+            }]
+            }
+            ,shade: 0.01
+            ,closeBtn: 1
+            ,anim: 5
+        });
+    });
+  
+
+
+
+})
+</script>

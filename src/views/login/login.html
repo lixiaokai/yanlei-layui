@@ -21,6 +21,11 @@
         <input type="password" name="password" value="123456" id="LAY-user-login-password" lay-verify="required" placeholder="密码" class="layui-input">
       </div>
       <div class="layui-form-item">
+        <div class="layui-block">
+          <div id="slider"></div>
+        </div>
+      </div>
+      <!-- <div class="layui-form-item">
         <div class="layui-row">
           <div class="layui-col-xs7">
             <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-vercode"></label>
@@ -32,10 +37,10 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="layui-form-item" style="margin-bottom: 20px;">
+      </div> -->
+      <!-- <div class="layui-form-item" style="margin-bottom: 20px;">
         <input type="checkbox" name="remember" lay-skin="primary" title="记住密码">
-      </div>
+      </div> -->
       <div class="layui-form-item">
         <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
       </div>
@@ -63,19 +68,34 @@
 </div>
 
 <script>
-layui.use(['setter', 'admin', 'user', 'form'], function(setter, admin, user, form){
+layui.use(['setter', 'admin', 'user', 'form', 'sliderVerify'], function(setter, admin, user, form, sliderVerify){
   let router = layui.router()
   ,search = router.search;
   
+  //初始化滑块
+  let slider = sliderVerify.render({
+    elem: '#slider',
+    isAutoVerify: false,//关闭自动验证
+    bg: 'layui-bg-blue',//自定义背景样式名
+    //text: '滑动',//自定义文字
+    onOk: function(){//当验证通过回调
+      layer.msg("滑块验证通过");
+    }
+  })
 
   form.render();
 
   //提交
   form.on('submit(LAY-user-login-submit)', function(obj){
-  
+
+    //判断滑块状态
+    if(!slider.isOk()){
+      layer.msg("请先通过滑块验证");
+      return false;
+    }
     //请求登入接口
     admin.req({
-      url: setter.ip + '/admin/login/login' //实际使用请改成服务端真实接口
+      url: setter.ip + '/admin/login/login?XDEBUG_SESSION_START=1000' //实际使用请改成服务端真实接口
       ,type: 'post'
       ,data: obj.field
       ,done: function(res){
@@ -97,6 +117,9 @@ layui.use(['setter', 'admin', 'user', 'form'], function(setter, admin, user, for
         });
       }
     });
+    
+    //重置滑块
+    //slider.reset();
     
   });
   

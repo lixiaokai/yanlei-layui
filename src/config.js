@@ -1,5 +1,5 @@
 
-/*!
+/*
  * 全局配置 
  */
  
@@ -12,11 +12,13 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     ,engine: '.html' //视图文件后缀名
     ,pageTabs: false //是否开启页面选项卡功能。单页版不推荐开启
     
-    ,name: 'layuiAdmin'
+    ,name: '后台管理系统'
     ,tableName: 'layuiAdmin' //本地存储表名
     ,MOD_NAME: 'admin' //模块事件名
 
-    ,ip: 'http://www.yanlei-thinkphp.com' //域名
+    ,ip: 'https://www.yanlei-thinkphp.com' //域名
+    
+    ,bucketDomain: 'https://projectName-shanghai-bucket.domainName.com' //阿里云OSS存储空间的域名
     
     ,debug: true //是否开启调试模式。如开启，接口异常时会抛出异常 URL 等信息
     
@@ -42,6 +44,12 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     //独立页面路由，可随意添加（无需写参数）
     ,indPage: [
       '/login/login' //登入页
+      ,'/order/printPreview' //定制商品订单的打印预览
+      ,'/h5/goodsInfo' //h5的商品信息
+      ,'/h5/noticeInfo' //h5的公告信息
+      ,'/h5/readmeInfo' //h5的自述信息
+      ,'/h5/systemSetupInfo' //h5的系统设置信息
+      ,'/h5/shareDownloadInfo' //h5的分享下载信息
     ]
     
     //扩展的模块（相对于 lib/extend 目录）

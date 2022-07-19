@@ -1,0 +1,318 @@
+
+<title>编辑订单</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>订单管理</cite></a>
+    <a><cite>订单列表</cite></a>
+    <a><cite>查看</cite></a>
+  </div>
+</div>
+
+<style>
+  .img_close:hover {
+      cursor: pointer;
+  }
+  .img_close {
+      height: 20px;
+      background-color: rgba(0,0,0,.5);
+      position: absolute;
+      top: 0;
+      right: 0px;
+      width: 20px;
+      color: #fff;
+      line-height: 18px;
+      font-size: 14px;
+      text-align: center;
+  }
+</style>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-header" style="text-align: right;color: #01AAED;" lay-href="/order/list">返回</div>
+    <div class="layui-card-body" style="padding: 15px;">
+
+        <div id="view"></div>
+        
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+    <div class="layui-form" action="" lay-filter="LAY-form-id">
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">订单编号</label>
+          <div class="layui-input-block">
+            <input type="text" value="{{ d.order_no || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <div class="layui-inline">
+              <label class="layui-form-label">收件人</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.address && d.address.receiver || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">手机号</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.address && d.address.mobile || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">收货地址</label>
+            <div class="layui-input-inline">
+              <input type="text" value="{{ d.address && d.address.province + ' ' + d.address.city + ' ' + d.address.area + ' ' + d.address.address || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;width: 450px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <div class="layui-inline">
+              <label class="layui-form-label">提醒发货</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.is_remind_delivery == 1 ? '已提醒' : d.is_remind_delivery == 2 ? '未提醒' : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">发货快递</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.express && d.express.name || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">快递单号</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.express_no || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <div class="layui-inline">
+              <label class="layui-form-label">支付方式</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.payment == 1 ? '余额' : 
+                d.payment == 2 ? '支付宝' : 
+                d.payment == 3 ? '微信' : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">订单金额</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.amount || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">包含运费</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.freight || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <div class="layui-inline">
+              <label class="layui-form-label">订单状态</label>
+              <div class="layui-input-inline">
+                  <input type="text" value="{{ d.status == 1 ? '待付款' : 
+                                              d.status == 2 ? '待发货' : 
+                                              d.status == 3 ? '待收货' : 
+                                              d.status == 4 ? '待评价' : 
+                                              d.status == 5 ? '已完成' : 
+                                              d.status == 6 ? '已取消' : 
+                                              d.status == 7 ? '申请售后' : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">付款时间</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.payment_time ? layui.admin.timestampToDateTime(d.payment_time) : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">发货时间</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.delivery_time ? layui.admin.timestampToDateTime(d.delivery_time) : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <div class="layui-inline">
+              <label class="layui-form-label">收货时间</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.receipt_time ? layui.admin.timestampToDateTime(d.receipt_time) : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+          <div class="layui-inline">
+              <label class="layui-form-label">取消时间</label>
+              <div class="layui-input-inline">
+                <input type="text" value="{{ d.cancel_time ? layui.admin.timestampToDateTime(d.cancel_time) : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+              </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">订单备注</label>
+          <div class="layui-input-block">
+            <input type="text" value="{{ d.remark || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+          </div>
+        </div>
+        
+        <div class="layui-form-item">
+          <label class="layui-form-label">订单商品</label>
+          <div class="layui-input-block">
+              <div id="specificationList" class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                <table class="layui-table">
+                  <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col width="100">
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>主键</th>
+                      <th>名称</th>
+                      <th>封面图</th>
+                      <th>属性</th>
+                      <th>规格</th>
+                      <th>价格</th>
+                      <th>数量</th>
+                      <th>评价</th>
+                    </tr>
+                  </thead>
+                  <tbody style="text-align: center;">
+                    {{#  layui.each(d.orderGoods, function(index, item){ }}
+                    <tr>
+                        <td>{{item['goods']['id']}}</td>
+                        <td>{{item['goods']['name']}}</td>
+                        <td><img style="width: 100px; height: 100px;" src="{{ layui.setter.ip + item.goods.surface_plot}}"></td>
+                        <td>{{item['attribute']}}</td>
+                        <td><img style="width: 100px; height: 100px;" src="{{layui.setter.ip + item.goodsSpecification.image}}"><span class="layui-badge-rim">{{item['goodsSpecification']['name']}}</span></td>
+                        <td>{{item['goodsSpecification']['price']}}</td>
+                        <td>{{item['quantity']}}</td>
+                        <td>
+                          {{#  if(item['evaluate']){ }}
+                          <button class="evaluate layui-btn layui-btn-sm" data-order_goods_id="{{item['id']}}">查看</button>
+                          {{#  } else { }}
+                            暂无
+                          {{#  } }}  
+                        </td>
+                    </tr>
+                    {{#  }); }}
+                  </tbody>
+                </table>
+              </div>
+          </div>
+        </div>
+        
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">订单售后</label>
+          <div class="layui-input-block">
+            {{#  if(d.aftermarket){ }}
+            <button class="aftermarket layui-btn layui-btn-sm">查看</button>
+            {{#  } else { }}
+              <input type="text" value="暂无" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+            {{#  } }} 
+          </div>
+        </div>
+    
+            
+
+        
+    </div>
+</script>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'layedit'], function(setter, admin, view, table, form, laytpl, upload, layedit){
+    //加载jquery
+    let $ = layui.$;
+
+    //获取 localStorage
+    let order = layui.data(setter.tableName).order;
+    
+    //获取模版
+    let getTpl = tpl.innerHTML;
+    //把数据放进模版里
+    laytpl(getTpl).render(order, function(html) {
+        //把模版放进视图里
+        $('#view').html(html);
+    });
+
+    //更新渲染
+    form.render(null, 'LAY-form-id');
+
+    //查看评价
+    $('.evaluate').click(function(){
+          let order_goods_id = $(this).data("order_goods_id");
+
+          let data = {};
+          //循环出评价数据
+          $.each(order.orderGoods, function(index, item) {
+              if (item.id == order_goods_id) {
+                  data = item.evaluate;
+              }
+          });
+          if (data.length == 0) {
+              return layer.msg('评价不存在');
+          }
+
+          admin.popup({
+              title: '查看'
+              ,area: ['700px', '550px']
+              ,id: 'LAY-view-add'
+              ,success: function(layero, index){
+                  //添加 localStorage
+                  layui.data(setter.tableName, {
+                    key: 'evaluate'
+                    ,value: data
+                  });
+                  //将 views 目录下的某视图文件内容渲染给该面板
+                  view(this.id).render('/order/showEvaluate', data).done(function(){
+                      form.render(null, 'LAY-form-id'); //更新渲染
+                  });
+              }
+          });
+
+    });
+
+
+    //查看售后
+    $('.aftermarket').click(function(){
+          let data = order.aftermarket;
+          if (data.length == 0) {
+              return layer.msg('售后不存在');
+          }
+
+          admin.popup({
+              title: '查看'
+              ,area: ['700px', '550px']
+              ,id: 'LAY-view-add'
+              ,success: function(layero, index){
+                  //添加 localStorage
+                  layui.data(setter.tableName, {
+                    key: 'aftermarket'
+                    ,value: data
+                  });
+                  //将 views 目录下的某视图文件内容渲染给该面板
+                  view(this.id).render('/order/showAftermarket', data).done(function(){
+                      form.render(null, 'LAY-form-id'); //更新渲染
+                  });
+              }
+          });
+
+    });
+
+
+
+});
+</script>

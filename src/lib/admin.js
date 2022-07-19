@@ -64,6 +64,28 @@ layui.define(['view', 'table', 'upload'], function(exports){
         ,area: '300px'
       }, options));
     }
+
+    //打印预览
+    ,printPreview: function(html){
+      //新建窗口
+			let newWindow = window.open("打印窗口", "_blank");
+      //写入拼凑内容
+			newWindow.document.write(html);
+      //调用打印
+			newWindow.print();
+    }
+
+    //时间戳转日期时间
+    ,timestampToDateTime: function(timestamp){
+      let date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      Y = date.getFullYear() + '-';
+      M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+      D = date.getDate() + ' ';
+      h = date.getHours() + ':';
+      m = (date.getMinutes() < 10 ? '0'+(date.getMinutes()) : date.getMinutes()) + ':';
+      s = (date.getSeconds() < 10 ? '0'+(date.getSeconds()) : date.getSeconds());
+      return Y+M+D+h+m+s;
+    }
     
     //发送验证码
     ,sendAuthCode: function(options){

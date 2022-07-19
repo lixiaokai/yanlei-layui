@@ -1,0 +1,52 @@
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">发货快递</label>
+      <div class="layui-input-inline">
+        <select name="express_id" lay-verify="required">
+          <option value="">请选择</option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">快递单号</label>
+      <div class="layui-input-inline">
+        <input type="text" name="express_no" value="" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <div class="layui-input-inline">
+        <input type="button" lay-submit lay-filter="LAY-form-submit" value="确认" class="layui-btn">
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['setter', 'admin', 'form', 'upload'], function(setter, admin, form, upload){
+    //加载jquery
+    let $ = layui.$;
+
+    //获取 localStorage
+    let order = layui.data(setter.tableName).order;
+    
+    //更新渲染
+    form.render(null, 'LAY-form-id');
+
+    //获取快递
+    admin.req({
+        url: setter.ip + '/admin/order/getExpress' //实际使用请改成服务端真实接口
+        ,type: 'get'
+        ,data: {}
+        ,done: function(res){
+            $.each(res.data, function (index, item) {
+                $('select[name="express_id"]').append(`<option value="${index}">${item}</option>`);
+            });
+            form.render('select', 'LAY-form-id'); //更新select选择框渲染
+            //layer.msg(res.message);
+        }
+    });
+
+
+  })
+  </script>

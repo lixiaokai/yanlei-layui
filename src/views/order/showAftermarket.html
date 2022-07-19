@@ -1,0 +1,123 @@
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">售后编号</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="text" value="{{ d.params.aftermarket_no || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">退款数量</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.refund_quantity || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">退款金额</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.refund_amount || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">商品状态</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.goods_status || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">退款原因</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.refund_reason || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">退款备注</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.refund_remark || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.status == 1 ? '通过' : d.params.status== 2 ? '驳回' : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">审核时间</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.audit_time ? layui.admin.timestampToDateTime(d.params.audit_time) : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">驳回原因</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.reject_reason || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">退款时间</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.refund_time ? layui.admin.timestampToDateTime(d.params.refund_time) : '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">退款路径</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" value="{{ d.params.refund_path || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+                </script>
+            </div>
+        </div>
+    </div>
+
+</div>
+  
+<script>
+layui.use(['setter', 'admin', 'form'], function(setter, admin, form){
+    //加载jquery
+    let $ = layui.$; 
+
+    //获取 localStorage
+    let aftermarket = layui.data(setter.tableName).aftermarket;
+
+    //更新渲染
+    form.render(null, 'LAY-form-id');
+
+
+})
+</script>

@@ -1,0 +1,124 @@
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">邮箱</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="email" value="{{ d.params.email || '' }}" lay-verify="email" placeholder="请输入" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">昵称</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="nickname" value="{{ d.params.nickname || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">手机号</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="mobile" value="{{ d.params.mobile || '' }}" lay-verify="phone" placeholder="请输入" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">出生日期</label>
+      <div class="layui-input-inline">
+          <input id="birthday" type="text" name="birthday" value="" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">头像</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="avatar" value="{{ d.params.avatar || '' }}" lay-verify="required" placeholder="请上传" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+        </script>
+      </div>
+      <button style="float: left;" type="button" class="layui-btn" id="avatar">上传</button> 
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">等级</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>          
+          <select name="level" lay-verify="required">
+            <option value="">请选择</option>
+            <option value="1" {{ d.params.level === 1 ? 'selected' : '' }}>注册用户</option>
+            <option value="2" {{ d.params.level === 2 ? 'selected' : '' }}>会员用户</option>
+          </select>  
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">是否启用</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="radio" name="is_use" value="1" title="是" {{ d.params.is_use === 1 ? 'checked' : '' }}>
+          <input type="radio" name="is_use" value="2" title="否" {{ d.params.is_use === 2 ? 'checked' : '' }}>
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <div class="layui-input-inline">
+        <input type="button" lay-submit lay-filter="LAY-form-submit" value="确认" class="layui-btn">
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['setter', 'admin', 'form', 'upload', 'laydate'], function(setter, admin, form, upload, laydate){
+    //加载jquery
+    let $ = layui.$;
+
+    //获取 localStorage
+    let user = layui.data(setter.tableName).user;
+
+    //选择日期
+    laydate.render({
+      elem: '#birthday'
+      ,value: new Date(user.birthday * 1000) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    });
+    
+    //上传头像
+    upload.render({
+      elem: '#avatar'
+      ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+      ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+      //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+      ,method: 'post'  //设定HTTP类型，默认post
+      ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+      ,field: 'file' //设定文件域的字段名，默认file
+      ,before: function(obj){ //上传前的回调
+        layer.load(1); //添加loading
+      }
+      ,done: function(res){ //上传后的回调
+        layer.closeAll('loading'); //关闭loading
+        if(res.code == 200){
+          $(this.item).prev("div").children("input").val(res.data.url);
+        }
+        layer.msg(res.message);
+      }
+    });
+
+    //放大图片
+    // $("input[name='avatar']").click(function(){
+    //     let avatar = $(this).val();
+    //     if(avatar){
+    //         layer.open({
+    //             type:1
+    //             ,title:false
+    //             ,closeBtn:0
+    //             ,shadeClose:true
+    //             ,content:'<img alt="图片" src="' + setter.ip + avatar + '"/>'
+    //             ,scrollbar:false
+    //         });
+    //     }
+    // });
+
+    
+
+  })
+  </script>

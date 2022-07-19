@@ -1,0 +1,63 @@
+<style>
+    .layui-form-item li {
+        margin-bottom: 5px!important;
+        margin-right: 10px!important;
+    }
+</style>
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">评分</label>
+        <div class="layui-input-block">
+            <div id="score"></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <div id="imageList" class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                    {{#  layui.each(d.params.image.split(','), function(index, item){ }}
+                    <li style="position:relative;margin:5px;display:inline-block;"> 
+                        <img src="{{layui.setter.ip + item}}" width="92px" height="92px"> 
+                    </li>
+                    {{#  }); }}
+                </div>
+            </script>
+        </div>
+    </div> 
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <textarea name="attribute" lay-verify="required" placeholder="请输入" class="layui-textarea" readonly="readonly">{{ d.params.content || '' }}</textarea>
+            </script>
+        </div>
+    </div>
+</div>
+  
+<script>
+layui.use(['setter', 'admin', 'form', 'rate'], function(setter, admin, form, rate){
+    //加载jquery
+    let $ = layui.$; 
+
+    //获取 localStorage
+    let evaluate = layui.data(setter.tableName).evaluate;
+
+    //更新渲染
+    form.render(null, 'LAY-form-id');
+
+    //评价
+    rate.render({
+        elem: '#score'
+        ,length: 5 //设置评分组件中星星的个数
+        ,value: evaluate.score //初始值
+        ,half: true //开启半星
+        //,text: true //显示对应的内容
+        ,readonly: true //只读
+    })
+
+})
+</script>

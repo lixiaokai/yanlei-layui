@@ -10,7 +10,7 @@
           </select>  
         </script>
       </div>
-      <div class="layui-form-mid layui-word-aux"><i id="pidTips" class="layui-icon layui-icon-face-surprised"></i></div>
+      <div class="layui-form-mid layui-word-aux"><i id="pidTips" class="layui-icon layui-icon-tips"></i></div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">标题</label>
@@ -36,7 +36,7 @@
           <input type="text" name="jump" value="{{ d.params.jump || '' }}" placeholder="请输入" autocomplete="off" class="layui-input">
         </script>
       </div>
-      <div class="layui-form-mid layui-word-aux"><i id="jumpTips" class="layui-icon layui-icon-face-surprised"></i></div>
+      <div class="layui-form-mid layui-word-aux"><i id="jumpTips" class="layui-icon layui-icon-tips"></i></div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">是否展开</label>
@@ -80,7 +80,7 @@
               $('select[name="pid"]').append(`<option value="${index}" ${(rule && index == rule.pid) ? 'selected' : ''}>${item}</option>`);
             });
             form.render('select', 'LAY-form-id'); //更新select选择框渲染
-            layer.msg(res.message);
+            //layer.msg(res.message);
         }
     });
 

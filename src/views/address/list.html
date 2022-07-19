@@ -1,0 +1,195 @@
+
+<title>地址列表</title>
+  
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>地址管理</cite></a>
+    <a><cite>地址列表</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="LAY-search-form">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">收件人</label>
+            <div class="layui-input-block">
+              <input type="text" name="receiver" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+              <input type="text" name="mobile" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">是否默认</label>
+          <div class="layui-input-block">
+            <select name="is_default">
+              <option value="">请选择</option>
+              <option value="1">是</option>
+              <option value="2">否</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <button class="layui-btn" lay-submit lay-filter="LAY-search-button">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="layui-card-body">
+      <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+          <div class="layui-btn-group">
+            <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+          </div>
+        </div>
+      </script>
+      
+      <table id="LAY-table-id" lay-filter="LAY-table-id"></table>
+
+      <script type="text/html" id="isDefaultTpl"> 
+        <input type="checkbox" lay-skin="switch" lay-text="是|否" {{ d.is_default === 1 ? 'checked' : '' }} disabled>
+      </script>
+      <script type="text/html" id="barDemo">
+        <div class="layui-btn-group">
+          <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+        </div>
+      </script>
+    </div>
+  </div>
+</div>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, view, table, form){
+  //加载jquery
+  let $ = layui.$; 
+
+  //获取 localStorage
+  let user = layui.data(setter.tableName).user;
+  if(!user){
+      return layer.msg('用户id不存在');
+  }
+  
+  //表单渲染
+  form.render(null, 'LAY-search-form');
+  
+  //开启搜索
+  form.on('submit(LAY-search-button)', function(data){
+    let field = data.field;
+    field['user_id'] = user.id; //追加user_id字段
+    //执行重载
+    table.reload('LAY-table-id', {
+      where: field
+      ,page: {
+        curr: 1 //重新从第 1 页开始
+      }
+    });
+  });
+
+  //表格渲染
+  table.render({
+    elem: '#LAY-table-id'
+    ,url: setter.ip + '/admin/address/lists' //实际使用请改成服务端真实接口
+    //,method: 'get' //请求类型，默认：get
+    ,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
+    ,where: {
+        user_id: user.id
+    }
+    //,request: {}
+    //,parseData: function(res){if(res[setter.response.statusName] == setter.response.statusCode.logout){view.exit();}} //res 即为原始返回的数据
+    ,response: {statusCode: setter.response.statusCode.ok} //规定成功的状态码，默认：0
+    ,cols: [[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field: 'id', width: 100, title: '主键'}
+      ,{field: 'user_nickname', title: '用户昵称', templet: function(res){
+        return (res.user && res.user.nickname ? res.user.nickname : '');
+      }}
+      ,{field: 'user_mobile', title: '用户手机号', templet: function(res){
+        return (res.user && res.user.mobile ? res.user.mobile : '');
+      }}
+      ,{field: 'receiver', title: '收件人'}
+      ,{field: 'mobile', title: '手机号'}
+      ,{field: 'province_city_area', title: '省市区', templet: function(res){
+        return `${res.province} ${res.city} ${res.area}`;
+      }}
+      ,{field: 'address', title: '详细地址'}
+      ,{field: 'is_default', title: '是否默认', templet: '#isDefaultTpl'}
+      ,{field: 'create_time', title: '创建时间', sort: true}
+      ,{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#barDemo'}
+    ]]
+    ,page: true
+    ,limit: 10
+    ,limits: [10, 15, 20, 25, 30]
+    ,text: {
+      none: '暂无相关数据' //默认：Error
+    }
+    ,toolbar: '#toolbarDemo'
+    ,defaultToolbar: ['filter', 'print', 'exports']
+    ,title: '地址表'
+  });
+
+  //行工具栏
+  table.on('tool(LAY-table-id)', function(obj){
+    let data = obj.data;
+    if(obj.event === 'delete'){
+      layer.confirm('确定删除行吗', function(index){
+          admin.req({
+            url: setter.ip + '/admin/address/delete' //实际使用请改成服务端真实接口
+            ,type: 'post'
+            ,data: {
+              id: data.id
+            }
+            ,done: function(res){
+              obj.del();
+              layer.msg(res.message);
+            }
+          });
+          layer.close(index);
+        });
+    }
+  });
+
+  //头工具栏
+  table.on('toolbar(LAY-table-id)', function(obj){
+    let checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+      case 'delete':
+        let checkStatus = table.checkStatus('LAY-table-id'); //得到选中的数据
+        if(checkStatus.data.length === 0){
+          return layer.msg('请选择数据');
+        }
+        let id = [];
+        $.each(checkStatus.data, function(index, item) {
+          id.push(item.id);
+        });
+        id = id.join(',');
+        layer.confirm('确定删除吗', function(index) {
+            //执行 Ajax 后重载
+            admin.req({
+              url: setter.ip + '/admin/address/delete' //实际使用请改成服务端真实接口
+              ,type: 'post'
+              ,data: {
+                id: id
+              }
+              ,done: function(res){
+                table.reload('LAY-table-id'); //重载表格
+                layer.msg(res.message);
+              }
+            });
+            layer.close(index);
+        });
+      break;
+    };
+  });
+
+
+  
+});
+</script>

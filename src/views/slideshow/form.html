@@ -1,0 +1,85 @@
+
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">名称</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="name" value="{{ d.params.name || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="image" value="{{ d.params.image || '' }}" lay-verify="required" placeholder="请上传" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+          </script>
+        </div>
+        <button style="float: left;" type="button" class="layui-btn" id="image">上传</button> 
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">链接</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="link" value="{{ d.params.link || '' }}" lay-verify="" placeholder="http://" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">类型</label>
+      <div class="layui-input-block">
+        <script type="text/html" template>
+          <input type="radio" name="type" value="1" title="APP" {{ d.params.type === 1 ? 'checked' : '' }}>
+          <input type="radio" name="type" value="2" title="PC" {{ d.params.type === 2 ? 'checked' : '' }}>
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">排序</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="sort" value="{{ d.params.sort || '100' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <div class="layui-input-inline">
+        <input type="button" lay-submit lay-filter="LAY-form-submit" value="确认" class="layui-btn">
+      </div>
+    </div>
+</div>
+  
+<script>
+layui.use(['setter', 'admin', 'form', 'upload'], function(setter, admin, form, upload){
+  //加载jquery
+  let $ = layui.$; 
+
+  //上传标识
+  upload.render({
+      elem: '#image'
+      ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+      ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+      //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+      ,method: 'post'  //设定HTTP类型，默认post
+      ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+      ,field: 'file' //设定文件域的字段名，默认file
+      ,before: function(obj){ //上传前的回调
+        layer.load(1); //添加loading
+      }
+      ,done: function(res){ //上传后的回调
+        layer.closeAll('loading'); //关闭loading
+        if(res.code == 200){
+          $(this.item).prev("div").children("input").val(res.data.url);
+        }
+        layer.msg(res.message);
+      }
+   });
+
+  
+
+
+
+})
+</script>

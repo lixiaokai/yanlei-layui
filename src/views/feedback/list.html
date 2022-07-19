@@ -1,0 +1,206 @@
+
+<title>意见反馈列表</title>
+  
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>意见反馈管理</cite></a>
+    <a><cite>意见反馈列表</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="LAY-search-form">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">状态</label>
+          <div class="layui-input-block">
+            <select name="status">
+              <option value="">请选择</option>
+              <option value="1">已处理</option>
+              <option value="2">未处理</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <button class="layui-btn" lay-submit lay-filter="LAY-search-button">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="layui-card-body">
+      <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+          <div class="layui-btn-group">
+            <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+          </div>
+        </div>
+      </script>
+      
+      <table id="LAY-table-id" lay-filter="LAY-table-id"></table>
+
+      <script type="text/html" id="statusTpl"> 
+        <input type="checkbox" lay-skin="switch" lay-text="已处理|未处理" {{ d.status === 1 ? 'checked' : '' }} disabled>
+      </script>
+      <script type="text/html" id="barDemo">
+        <div class="layui-btn-group">
+          {{#  if(d.status !== 1 ){ }}
+          <button class="layui-btn layui-btn-sm" lay-event="process">处理</button>
+          {{#  } }}
+          <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+        </div>
+      </script>
+    </div>
+  </div>
+</div>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, view, table, form){
+  //加载jquery
+  let $ = layui.$; 
+  
+  //表单渲染
+  form.render(null, 'LAY-search-form');
+  
+  //开启搜索
+  form.on('submit(LAY-search-button)', function(data){
+    let field = data.field;
+    
+    //执行重载
+    table.reload('LAY-table-id', {
+      where: field
+      ,page: {
+        curr: 1 //重新从第 1 页开始
+      }
+    });
+  });
+
+  //表格渲染
+  table.render({
+    elem: '#LAY-table-id'
+    ,url: setter.ip + '/admin/feedback/lists' //实际使用请改成服务端真实接口
+    //,method: 'get' //请求类型，默认：get
+    ,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
+    //,where: {}
+    //,request: {}
+    //,parseData: function(res){if(res[setter.response.statusName] == setter.response.statusCode.logout){view.exit();}} //res 即为原始返回的数据
+    ,response: {statusCode: setter.response.statusCode.ok} //规定成功的状态码，默认：0
+    ,cols: [[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field: 'id', width: 100, title: '主键'}
+      ,{field: 'user_nickname', title: '用户昵称', templet: function(res){
+        return (res.user && res.user.nickname ? res.user.nickname : '');
+      }}
+      ,{field: 'user_mobile', title: '用户手机号', templet: function(res){
+        return (res.user && res.user.mobile ? res.user.mobile : '');
+      }}
+      ,{field: 'content', title: '内容'}
+      ,{field: 'status', title: '状态', templet: '#statusTpl'}
+      ,{field: 'create_time', title: '创建时间', sort: true}
+      ,{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#barDemo'}
+    ]]
+    ,page: true
+    ,limit: 10
+    ,limits: [10, 15, 20, 25, 30]
+    ,text: {
+      none: '暂无相关数据' //默认：Error
+    }
+    ,toolbar: '#toolbarDemo'
+    ,defaultToolbar: ['filter', 'print', 'exports']
+    ,title: '意见反馈表'
+  });
+
+  //行工具栏
+  table.on('tool(LAY-table-id)', function(obj){
+    let data = obj.data;
+    if(obj.event === 'process'){
+      admin.popup({
+        title: '处理'
+        ,area: ['500px', '550px']
+        ,id: 'LAY-view-add'
+        ,success: function(layero, index){
+          //添加 localStorage
+          layui.data(setter.tableName, {
+            key: 'feedback'
+            ,value: data
+          });
+          //将 views 目录下的某视图文件内容渲染给该面板
+          view(this.id).render('/feedback/process', data).done(function(){
+            form.render(null, 'LAY-form-id'); //更新渲染
+            //提交
+            form.on('submit(LAY-form-submit)', function(data){
+              let field = data.field; //获取提交的字段
+              field['id'] = obj.data.id; //追加id字段
+              //提交 Ajax 成功后，关闭当前弹层并重载表格
+              admin.req({
+                url: setter.ip + '/admin/feedback/process' //实际使用请改成服务端真实接口
+                ,type: 'post'
+                ,data: field
+                ,done: function(res){
+                  table.reload('LAY-table-id'); //重载表格
+                  layer.msg(res.message);
+                  layer.close(index); //执行关闭
+                }
+              });
+            });
+          });
+        }
+      });
+    } else if(obj.event === 'delete'){
+      layer.confirm('确定删除行吗', function(index){
+          admin.req({
+            url: setter.ip + '/admin/feedback/delete' //实际使用请改成服务端真实接口
+            ,type: 'post'
+            ,data: {
+              id: data.id
+            }
+            ,done: function(res){
+              obj.del();
+              layer.msg(res.message);
+            }
+          });
+          layer.close(index);
+        });
+    }
+  });
+
+  //头工具栏
+  table.on('toolbar(LAY-table-id)', function(obj){
+    let checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+      case 'delete':
+        let checkStatus = table.checkStatus('LAY-table-id'); //得到选中的数据
+        if(checkStatus.data.length === 0){
+          return layer.msg('请选择数据');
+        }
+        let id = [];
+        $.each(checkStatus.data, function(index, item) {
+          id.push(item.id);
+        });
+        id = id.join(',');
+        layer.confirm('确定删除吗', function(index) {
+            //执行 Ajax 后重载
+            admin.req({
+              url: setter.ip + '/admin/feedback/delete' //实际使用请改成服务端真实接口
+              ,type: 'post'
+              ,data: {
+                id: id
+              }
+              ,done: function(res){
+                table.reload('LAY-table-id'); //重载表格
+                layer.msg(res.message);
+              }
+            });
+            layer.close(index);
+        });
+      break;
+    };
+  });
+
+
+  
+});
+</script>

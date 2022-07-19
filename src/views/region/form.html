@@ -28,7 +28,7 @@
 </div>
   
 <script>
-layui.use(['setter', 'admin', 'form', 'tree'], function(setter, admin, form, tree){
+layui.use(['setter', 'admin', 'form'], function(setter, admin, form){
   //加载jquery
   let $ = layui.$; 
 
@@ -42,10 +42,10 @@ layui.use(['setter', 'admin', 'form', 'tree'], function(setter, admin, form, tre
         ,data: {}
         ,done: function(res){
             $.each(res.data, function (index, item) {
-              $('select[name="pid"]').append(`<option value="${index}" ${(region && index == region.pid) ? 'selected' : ''}>${item}</option>`);
+              $('select[name="pid"]').append(`<option value="${item.id}" ${(region && item.id == region.pid) ? 'selected' : ''}>${item.name}</option>`);
             });
             form.render('select', 'LAY-form-id'); //更新select选择框渲染
-            layer.msg(res.message);
+            //layer.msg(res.message);
         }
   });
 

@@ -4,6 +4,7 @@
 <div class="layui-card layadmin-header">
   <div class="layui-breadcrumb" lay-filter="breadcrumb">
     <a lay-href="">主页</a>
+    <a><cite>设置管理</cite></a>
     <a><cite>系统设置</cite></a>
   </div>
 </div>
@@ -32,16 +33,71 @@
     </div>
     </div>
     <div class="layui-form-item">
-    <label class="layui-form-label">网站图标</label>
+    <label class="layui-form-label">网站标识</label>
     <div class="layui-input-inline">
-        <input type="text" name="site_icon" value="{{ d.site_icon || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        <input type="text" name="site_logo" value="{{ d.site_logo || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
     </div>
+    <button style="float: left;" type="button" class="layui-btn" id="site_logo">上传</button> 
     </div>
     <div class="layui-form-item">
     <label class="layui-form-label">网站版权</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
         <input type="text" name="site_copyright" value="{{ d.site_copyright || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
     </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">平台的电话</label>
+    <div class="layui-input-inline">
+        <input type="text" name="platform_phone" value="{{ d.platform_phone || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">平台的微信二维码</label>
+    <div class="layui-input-inline">
+        <input type="text" name="platform_wechat" value="{{ d.platform_wechat || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+    </div>
+    <button style="float: left;" type="button" class="layui-btn" id="platform_wechat">上传</button> 
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">平台的下载应用二维码</label>
+    <div class="layui-input-inline">
+        <input type="text" name="platform_application" value="{{ d.platform_application || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+    </div>
+    <button style="float: left;" type="button" class="layui-btn" id="platform_application">上传</button> 
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">网站底部横幅</label>
+    <div class="layui-input-inline">
+        <input type="text" name="site_bottom_banner" value="{{ d.site_bottom_banner || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+    </div>
+    <button style="float: left;" type="button" class="layui-btn" id="site_bottom_banner">上传</button> 
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">搜索的关键词</label>
+      <div class="layui-input-block">
+          <textarea name="search_keyword" lay-verify="required" placeholder="请输入" class="layui-textarea">{{ d.search_keyword || '' }}</textarea>
+      </div>
+      <div class="layui-input-block">
+          <div class="layui-form-mid layui-word-aux">注意：多个使用英文逗号分隔</div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">售后的商品状态</label>
+      <div class="layui-input-block">
+          <textarea name="goods_status" lay-verify="required" placeholder="请输入" class="layui-textarea">{{ d.goods_status || '' }}</textarea>
+      </div>
+      <div class="layui-input-block">
+          <div class="layui-form-mid layui-word-aux">注意：多个使用英文逗号分隔</div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">售后的退款原因</label>
+      <div class="layui-input-block">
+          <textarea name="refund_reason" lay-verify="required" placeholder="请输入" class="layui-textarea">{{ d.refund_reason || '' }}</textarea>
+      </div>
+      <div class="layui-input-block">
+          <div class="layui-form-mid layui-word-aux">注意：多个使用英文逗号分隔</div>
+      </div>
     </div>
     <div class="layui-form-item">
     <label class="layui-form-label">网站详情</label>
@@ -50,9 +106,35 @@
     </div>
     </div>
     <div class="layui-form-item">
+      <label class="layui-form-label">使用帮助</label>
+      <div class="layui-input-block">
+          <textarea id="use_help" style="display: none;">{{ d.use_help || '' }}</textarea>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">关于平台</label>
+      <div class="layui-input-block">
+          <textarea id="about_platform" style="display: none;">{{ d.about_platform || '' }}</textarea>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">平台用户协议</label>
+      <div class="layui-input-block">
+          <textarea id="platform_user_agreement" style="display: none;">{{ d.platform_user_agreement || '' }}</textarea>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">平台隐私政策</label>
+      <div class="layui-input-block">
+          <textarea id="platform_privacy_policy" style="display: none;">{{ d.platform_privacy_policy || '' }}</textarea>
+      </div>
+    </div>
+    <div class="layui-form-item">
     <div class="layui-input-block">
+      <div class="layui-footer">
         <button class="layui-btn" lay-submit lay-filter="LAY-form-submit">确认</button>
         <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
     </div>
     </div>
 </div>
@@ -63,6 +145,10 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
   //加载jquery
   let $ = layui.$;
   let site_detail;
+  let use_help;
+  let about_platform;
+  let platform_user_agreement;
+  let platform_privacy_policy;
 
   //注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
   layedit.set({
@@ -75,7 +161,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
 
   //获取系统设置信息
   admin.req({
-    url: layui.setter.ip + '/admin/systemSetup/info' //实际使用请改成服务端真实接口
+    url: setter.ip + '/admin/systemSetup/info' //实际使用请改成服务端真实接口
     ,type: 'get'
     ,data: {}
     ,done: function(res){
@@ -90,11 +176,106 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
 
         //建立编辑器
         site_detail = layedit.build('site_detail');
+        use_help = layedit.build('use_help');
+        about_platform = layedit.build('about_platform');
+        platform_user_agreement = layedit.build('platform_user_agreement');
+        platform_privacy_policy = layedit.build('platform_privacy_policy');
 
         //重置表单
         $('button[type="reset"]').on('click', function(){
             $('input').val('');
+            layedit.setContent(site_detail, '', false);
+            layedit.setContent(use_help, '', false);
+            layedit.setContent(about_platform, '', false);
+            layedit.setContent(platform_user_agreement, '', false);
+            layedit.setContent(platform_privacy_policy, '', false);
         });
+
+        //上传网站标识
+        upload.render({
+          elem: '#site_logo'
+          ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+          ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+          //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+          ,method: 'post'  //设定HTTP类型，默认post
+          ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+          ,field: 'file' //设定文件域的字段名，默认file
+          ,before: function(obj){ //上传前的回调
+            layer.load(1); //添加loading
+          }
+          ,done: function(res){ //上传后的回调
+            layer.closeAll('loading'); //关闭loading
+            if(res.code == 200){
+              $(this.item).prev("div").children("input").val(res.data.url);
+            }
+            layer.msg(res.message);
+          }
+        });
+
+        //上传平台的微信
+        upload.render({
+          elem: '#platform_wechat'
+          ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+          ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+          //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+          ,method: 'post'  //设定HTTP类型，默认post
+          ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+          ,field: 'file' //设定文件域的字段名，默认file
+          ,before: function(obj){ //上传前的回调
+            layer.load(1); //添加loading
+          }
+          ,done: function(res){ //上传后的回调
+            layer.closeAll('loading'); //关闭loading
+            if(res.code == 200){
+              $(this.item).prev("div").children("input").val(res.data.url);
+            }
+            layer.msg(res.message);
+          }
+        });
+        
+        //上传平台的应用
+        upload.render({
+          elem: '#platform_application'
+          ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+          ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+          //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+          ,method: 'post'  //设定HTTP类型，默认post
+          ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+          ,field: 'file' //设定文件域的字段名，默认file
+          ,before: function(obj){ //上传前的回调
+            layer.load(1); //添加loading
+          }
+          ,done: function(res){ //上传后的回调
+            layer.closeAll('loading'); //关闭loading
+            if(res.code == 200){
+              $(this.item).prev("div").children("input").val(res.data.url);
+            }
+            layer.msg(res.message);
+          }
+        });
+
+        //上传网站底部横幅
+        upload.render({
+          elem: '#site_bottom_banner'
+          ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+          ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+          //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+          ,method: 'post'  //设定HTTP类型，默认post
+          ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+          ,field: 'file' //设定文件域的字段名，默认file
+          ,before: function(obj){ //上传前的回调
+            layer.load(1); //添加loading
+          }
+          ,done: function(res){ //上传后的回调
+            layer.closeAll('loading'); //关闭loading
+            if(res.code == 200){
+              $(this.item).prev("div").children("input").val(res.data.url);
+            }
+            layer.msg(res.message);
+          }
+        });
+
+
 
     }
   });
@@ -102,10 +283,14 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
   //开启提交
   form.on('submit(LAY-form-submit)', function(data){
     let field = data.field; //获取提交的字段
-    field['site_detail'] = layedit.getContent(site_detail); //追加site_detail字段
+    field['site_detail'] = layedit.getContent(site_detail); //追加字段
+    field['use_help'] = layedit.getContent(use_help); //追加字段
+    field['about_platform'] = layedit.getContent(about_platform); //追加字段
+    field['platform_user_agreement'] = layedit.getContent(platform_user_agreement); //追加字段
+    field['platform_privacy_policy'] = layedit.getContent(platform_privacy_policy); //追加字段
     //提交 Ajax 成功后，关闭当前弹层并重载表格
     admin.req({
-      url: layui.setter.ip + '/admin/systemSetup/edit' //实际使用请改成服务端真实接口
+      url: setter.ip + '/admin/systemSetup/edit' //实际使用请改成服务端真实接口
       ,type: 'post'
       ,data: field
       ,done: function(res){

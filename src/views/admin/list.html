@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="layui-inline">
-            <label class="layui-form-label">电话</label>
+            <label class="layui-form-label">手机号</label>
             <div class="layui-input-block">
               <input type="text" name="mobile" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
@@ -63,7 +63,7 @@
       <table id="LAY-table-id" lay-filter="LAY-table-id"></table>
       
       <script type="text/html" id="avatarTpl"> 
-        <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+        <img style="display: inline-block; width: 50%; height: 100%;" src="{{ layui.setter.ip + d.avatar }}">
       </script> 
       <script type="text/html" id="isUseTpl"> 
         <input type="checkbox" lay-skin="switch" lay-text="是|否" {{ d.is_use === 1 ? 'checked' : '' }} disabled>
@@ -94,15 +94,18 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     //执行重载
     table.reload('LAY-table-id', {
       where: field
+      ,page: {
+        curr: 1 //重新从第 1 页开始
+      }
     });
   });
 
   //表格渲染
   table.render({
     elem: '#LAY-table-id'
-    ,url: layui.setter.ip + '/admin/admin/lists' //实际使用请改成服务端真实接口
+    ,url: setter.ip + '/admin/admin/lists' //实际使用请改成服务端真实接口
     //,method: 'get' //请求类型，默认：get
-    //,headers: {Authorization: layui.data(layui.setter.tableName)[layui.setter.request.tokenName]} //请求头
+    ,headers: {Authorization: layui.data(layui.setter.tableName)[layui.setter.request.tokenName]} //请求头
     //,where: {}
     //,request: {}
     //,parseData: function(res){if(res[layui.setter.response.statusName] == layui.setter.response.statusCode.logout){view.exit();}} //res 即为原始返回的数据
@@ -113,7 +116,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
       ,{field: 'nickname', title: '昵称'}
       ,{field: 'avatar', title: '头像', width: 100, templet: '#avatarTpl'}
       ,{field: 'email', title: '邮箱'}
-      ,{field: 'mobile', title: '电话'}
+      ,{field: 'mobile', title: '手机号'}
       ,{field: 'is_use', title: '是否启用', templet: '#isUseTpl'}
       ,{field: 'create_time', title: '创建时间', sort: true}
       ,{title: '操作', width: 200, align:'center', fixed: 'right', toolbar: '#barDemo'}
@@ -152,7 +155,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
               field['id'] = obj.data.id; //追加id字段
               //提交 Ajax 成功后，关闭当前弹层并重载表格
               admin.req({
-                url: layui.setter.ip + '/admin/admin/edit' //实际使用请改成服务端真实接口
+                url: setter.ip + '/admin/admin/edit' //实际使用请改成服务端真实接口
                 ,type: 'post'
                 ,data: field
                 ,done: function(res){
@@ -168,7 +171,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     } else if(obj.event === 'delete'){
       layer.confirm('确定删除行吗', function(index){
           admin.req({
-            url: layui.setter.ip + '/admin/admin/delete' //实际使用请改成服务端真实接口
+            url: setter.ip + '/admin/admin/delete' //实际使用请改成服务端真实接口
             ,type: 'post'
             ,data: {
               id: data.id
@@ -187,7 +190,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
           layer.close(index);
           if(password === confirm_password){
             admin.req({
-              url: layui.setter.ip + '/admin/admin/password' //实际使用请改成服务端真实接口
+              url: setter.ip + '/admin/admin/password' //实际使用请改成服务端真实接口
               ,type: 'post'
               ,data: {
                 id: data.id
@@ -229,7 +232,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
                 let field = data.field; //获取提交的字段
                 //提交 Ajax 成功后，关闭当前弹层并重载表格
                 admin.req({
-                  url: layui.setter.ip + '/admin/admin/add' //实际使用请改成服务端真实接口
+                  url: setter.ip + '/admin/admin/add' //实际使用请改成服务端真实接口
                   ,type: 'post'
                   ,data: field
                   ,done: function(res){

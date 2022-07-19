@@ -85,6 +85,9 @@ layui.use('useradmin', layui.factory('useradmin')).use(['admin', 'useradmin', 't
     //执行重载
     table.reload('LAY-user-manage', {
       where: field
+      ,page: {
+        curr: 1 //重新从第 1 页开始
+      }
     });
   });
 

@@ -72,6 +72,9 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     //执行重载
     table.reload('LAY-table-id', {
       where: field
+      ,page: {
+        curr: 1 //重新从第 1 页开始
+      }
     });
   });
 
@@ -80,7 +83,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     elem: '#LAY-table-id'
     ,url: setter.ip + '/admin/log/lists' //实际使用请改成服务端真实接口
     //,method: 'get' //请求类型，默认：get
-    //,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
+    ,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
     //,where: {}
     //,request: {}
     //,parseData: function(res){if(res[setter.response.statusName] == setter.response.statusCode.logout){view.exit();}} //res 即为原始返回的数据
@@ -89,7 +92,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 100, title: '主键'}
       ,{field: 'operator_id', title: '操作员', templet: function(res){
-        return `${res.type == 1 ? '管理员' : res.type == 2 ? '用户' : ''}[ID:${res.operator_id}]`;
+        return `${res.type == 1 ? '管理员' : res.type == 2 ? '用户' : res.type == 3 ? '销售员' : ''}[ID:${res.operator_id}]`;
       }}
       ,{field: 'content', title: '内容'}
       ,{field: 'create_time', title: '创建时间', sort: true}

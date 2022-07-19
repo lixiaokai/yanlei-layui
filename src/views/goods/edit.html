@@ -1,0 +1,621 @@
+
+<title>编辑商品</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">主页</a>
+    <a><cite>商品管理</cite></a>
+    <a><cite>商品列表</cite></a>
+    <a><cite>编辑商品</cite></a>
+  </div>
+</div>
+
+<style>
+  .img_close:hover {
+      cursor: pointer;
+  }
+  .img_close {
+      height: 20px;
+      background-color: rgba(0,0,0,.5);
+      position: absolute;
+      top: 0;
+      right: 0px;
+      width: 20px;
+      color: #fff;
+      line-height: 18px;
+      font-size: 14px;
+      text-align: center;
+  }
+</style>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-header" style="text-align: right;color: #01AAED;" lay-href="/goods/list">返回</div>
+    <div class="layui-card-body" style="padding: 15px;">
+
+        <div id="view"></div>
+        
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+    <div class="layui-form" action="" lay-filter="LAY-form-id">
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">商品分类</label>
+          <div class="layui-input-inline">
+            <select name="first_goods_category_id" lay-filter="first_goods_category_id" lay-verify="required">
+              <option value="">请选择</option>
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="second_goods_category_id" lay-filter="second_goods_category_id" lay-verify="required">
+              <option value="">请选择</option>
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="third_goods_category_id" lay-filter="third_goods_category_id" lay-verify="required">
+              <option value="">请选择</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">名称</label>
+          <div class="layui-input-block">
+            <input type="text" name="name" value="{{ d.name || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">标题</label>
+          <div class="layui-input-block">
+            <input type="text" name="title" value="{{ d.title || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">封面图</label>
+          <div class="layui-input-inline">
+            <input type="text" name="surface_plot" value="{{ d.surface_plot || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+          </div>
+          <button type="button" class="layui-btn" id="surface_plot">上传</button> 
+          <div class="layui-input-block">
+            <div class="layui-form-mid layui-word-aux">注意：封面图尺寸为180px*180px</div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">图片</label>
+          <div class="layui-input-block">
+              <button type="button" class="layui-btn" id="image">上传</button> 
+              <div id="imageList" class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                {{#  layui.each(d.image.split(','), function(index, item){ }}
+                <li style="position:relative;margin:5px;display:inline-block;"> 
+                    <img src="{{layui.setter.ip + item}}" data-image="{{item}}" width="92px" height="92px"> 
+                    <div class="img_close" onclick="this.parentNode.parentNode.removeChild(this.parentNode);">X</div>
+                </li>
+                {{#  }); }}
+              </div>
+              <div class="layui-form-mid layui-word-aux">注意：图片尺寸为450px*450px</div>
+          </div>
+        </div>   
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">视频</label>
+          <div class="layui-input-inline">
+            <input type="text" name="video" value="{{ d.video || '' }}" lay-verify="" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly">
+          </div>
+          <button type="button" class="layui-btn" id="video">上传</button> 
+          <div class="layui-input-block">
+            <div class="layui-form-mid layui-word-aux">注意：视频尺寸为180px*180px</div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">原价</label>
+            <div class="layui-input-inline">
+              <input type="number" name="price" value="{{ d.price || '' }}" lay-verify="required" placeholder="￥" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">销量</label>
+            <div class="layui-input-inline">
+              <input type="number" name="sales" value="{{ d.sales || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">库存</label>
+            <div class="layui-input-inline">
+              <input type="number" name="stock" value="{{ d.stock || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">人气</label>
+            <div class="layui-input-inline">
+              <input type="number" name="popularity" value="{{ d.popularity || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">运费</label>
+          <div class="layui-input-inline">
+            <input type="number" name="freight" value="{{ d.freight || '' }}" lay-verify="required" placeholder="￥" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">属性含义</label>
+            <div class="layui-input-inline">
+              <input type="text" name="attribute_mean" value="{{ d.attribute_mean || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">规格含义</label>
+            <div class="layui-input-inline">
+              <input type="text" name="specification_mean" value="{{ d.specification_mean || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">属性</label>
+          <div class="layui-input-block">
+            <textarea name="attribute" lay-verify="required" placeholder="请输入" class="layui-textarea">{{ d.attribute || '' }}</textarea>
+          </div>
+          <div class="layui-input-block">
+            <div class="layui-form-mid layui-word-aux">注意：多个使用英文逗号分隔</div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">规格</label>
+          <div class="layui-input-block">
+              <button type="button" class="layui-btn" id="specification">添加</button>
+              <div id="specificationList" class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                <table class="layui-table">
+                  <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col width="100">
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>名称</th>
+                      <th>图片</th>
+                      <th>价格</th>
+                      <th>操作</th>
+                    </tr> 
+                  </thead>
+                  <tbody>
+                    {{#  layui.each(d.goodsSpecification, function(index, item){ }}
+                    <tr>
+                        <td><input type="text" name="specification_name" value="{{item['name']}}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                        <td><div class="layui-col-md9"> <input type="text" name="specification_image" value="{{item['image']}}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly"> </div><div class="layui-col-md3"> <button type="button" class="layui-btn specificationImage">上传</button> </div></td>
+                        <td><input type="text" name="specification_price" value="{{item['price']}}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                        <td>
+                          <input type="hidden" name="specification_id" value="{{item['id']}}">
+                          <button type="button" class="layui-btn layui-btn-disabled">删除</button>
+                        </td>
+                    </tr>
+                    {{#  }); }}
+                  </tbody>
+                </table>
+              </div>
+              <div class="layui-form-mid layui-word-aux">注意：规格图片尺寸为80px*80px</div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">参数</label>
+          <div class="layui-input-block">
+              <button type="button" class="layui-btn" id="parameter">添加</button>
+              <div id="parameterList" class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                <table class="layui-table">
+                  <colgroup>
+                    <col>
+                    <col>
+                    <col width="100">
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>键名</th>
+                      <th>键值</th>
+                      <th>操作</th>
+                    </tr> 
+                  </thead>
+                  <tbody>
+                    {{#  layui.each(d.goodsParameter, function(index, item){ }}
+                    <tr>
+                        <td><input type="text" name="parameter_key" value="{{item['key']}}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                        <td><input type="text" name="parameter_value" value="{{item['value']}}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                        <td>
+                          <input type="hidden" name="parameter_id" value="{{item['id']}}">
+                          <button type="button" class="layui-btn layui-btn-disabled">删除</button>
+                        </td>
+                    </tr>
+                    {{#  }); }}
+                  </tbody>
+                </table>
+              </div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">详情</label>
+          <div class="layui-input-block">
+            <textarea id="detail" style="display: none;">{{ d.detail || '' }}</textarea>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">是否推荐首页</label>
+          <div class="layui-input-block">
+            <input type="radio" name="is_recommend_index" value="1" title="是" {{ d.is_recommend_index === 1 ? 'checked' : '' }}>
+            <input type="radio" name="is_recommend_index" value="2" title="否" {{ d.is_recommend_index === 2 ? 'checked' : '' }}>
+          </div>
+          <div class="layui-input-block">
+            <div class="layui-form-mid layui-word-aux">注意：推荐商品会在首页展示</div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">是否推荐热门</label>
+          <div class="layui-input-block">
+            <input type="radio" name="is_recommend_hot" value="1" title="是" {{ d.is_recommend_hot === 1 ? 'checked' : '' }}>
+            <input type="radio" name="is_recommend_hot" value="2" title="否" {{ d.is_recommend_hot === 2 ? 'checked' : '' }}>
+          </div>
+          <div class="layui-input-block">
+            <div class="layui-form-mid layui-word-aux">注意：推荐商品会在热门展示</div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">是否推荐爆款</label>
+          <div class="layui-input-block">
+            <input type="radio" name="is_recommend_blast" value="1" title="是" {{ d.is_recommend_blast === 1 ? 'checked' : '' }}>
+            <input type="radio" name="is_recommend_blast" value="2" title="否" {{ d.is_recommend_blast === 2 ? 'checked' : '' }}>
+          </div>
+          <div class="layui-input-block">
+            <div class="layui-form-mid layui-word-aux">注意：推荐商品会在爆款展示</div>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">状态</label>
+          <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="上架" {{ d.status === 1 ? 'checked' : '' }}>
+            <input type="radio" name="status" value="2" title="下架" {{ d.status === 2 ? 'checked' : '' }}>
+          </div>
+        </div>
+            
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-footer">
+                    <button class="layui-btn" lay-submit="" lay-filter="LAY-form-submit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</script>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'layedit'], function(setter, admin, view, table, form, laytpl, upload, layedit){
+    //加载jquery
+    let $ = layui.$;
+
+    //获取 localStorage
+    let goods = layui.data(setter.tableName).goods;
+
+    //获取模版
+    let getTpl = tpl.innerHTML;
+    //把数据放进模版里
+    laytpl(getTpl).render(goods, function(html) {
+        //把模版放进视图里
+        $('#view').html(html);
+    });
+
+    //更新渲染
+    form.render(null, 'LAY-form-id');
+
+    //获取商品一级分类
+    admin.req({
+        url: setter.ip + '/admin/goods/getGoodsCategory' //实际使用请改成服务端真实接口
+        ,type: 'get'
+        ,data: {
+          pid: 0
+        }
+        ,done: function(res){
+            $.each(res.data, function (index, item) {
+                $('select[name="first_goods_category_id"]').append(`<option value="${item.id}" ${(item.id == goods.first_goods_category_id) ? 'selected' : ''}>${item.name}</option>`);
+            });
+            form.render('select', 'LAY-form-id'); //更新select选择框渲染
+            //layer.msg(res.message);
+
+            //获取商品二级分类
+            admin.req({
+                url: setter.ip + '/admin/goods/getGoodsCategory' //实际使用请改成服务端真实接口
+                ,type: 'get'
+                ,data: {
+                  pid: goods.first_goods_category_id
+                }
+                ,done: function(res){
+                    $.each(res.data, function (index, item) {
+                      $('select[name="second_goods_category_id"]').append(`<option value="${item.id}" ${(item.id == goods.second_goods_category_id) ? 'selected' : ''}>${item.name}</option>`);
+                    });
+                    form.render('select', 'LAY-form-id'); //更新select选择框渲染
+                    //layer.msg(res.message);
+
+                    //获取商品三级分类
+                    admin.req({
+                        url: setter.ip + '/admin/goods/getGoodsCategory' //实际使用请改成服务端真实接口
+                        ,type: 'get'
+                        ,data: {
+                          pid: goods.second_goods_category_id
+                        }
+                        ,done: function(res){
+                            $.each(res.data, function (index, item) {
+                              $('select[name="third_goods_category_id"]').append(`<option value="${item.id}" ${(item.id == goods.third_goods_category_id) ? 'selected' : ''}>${item.name}</option>`);
+                            });
+                            form.render('select', 'LAY-form-id'); //更新select选择框渲染
+                            //layer.msg(res.message);
+                        }
+                    });
+
+                }
+            });
+
+        }
+    });
+
+    //触发select选择
+    form.on('select(first_goods_category_id)', function(data){
+      //获取商品二级分类
+      admin.req({
+          url: setter.ip + '/admin/goods/getGoodsCategory' //实际使用请改成服务端真实接口
+          ,type: 'get'
+          ,data: {
+            pid: data.value
+          }
+          ,done: function(res){
+              //清空二级分类保留第一项数据
+              $('select[name="second_goods_category_id"] option:not(:first)').remove();
+              //清空三级分类保留第一项数据
+              $('select[name="third_goods_category_id"] option:not(:first)').remove();
+              //显示二级分类数据
+              $.each(res.data, function (index, item) {
+                $('select[name="second_goods_category_id"]').append(`<option value="${item.id}">${item.name}</option>`);
+              });
+              form.render('select', 'LAY-form-id'); //更新select选择框渲染
+              //layer.msg(res.message);
+          }
+      });
+    });
+
+    //触发select选择
+    form.on('select(second_goods_category_id)', function(data){
+      //获取商品三级分类
+      admin.req({
+          url: setter.ip + '/admin/goods/getGoodsCategory' //实际使用请改成服务端真实接口
+          ,type: 'get'
+          ,data: {
+            pid: data.value
+          }
+          ,done: function(res){
+              //清空三级分类保留第一项数据
+              $('select[name="third_goods_category_id"] option:not(:first)').remove();
+              //显示三级分类数据
+              $.each(res.data, function (index, item) {
+                $('select[name="third_goods_category_id"]').append(`<option value="${item.id}">${item.name}</option>`);
+              });
+              form.render('select', 'LAY-form-id'); //更新select选择框渲染
+              //layer.msg(res.message);
+          }
+      });
+    });
+
+    //上传封面图
+    upload.render({
+        elem: '#surface_plot'
+        ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+        ,accept: 'images' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+        //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+        ,method: 'post'  //设定HTTP类型，默认post
+        ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
+        ,field: 'file' //设定文件域的字段名，默认file
+        ,before: function(obj){ //上传前的回调
+          layer.load(1); //添加loading
+        }
+        ,done: function(res){ //上传后的回调
+          layer.closeAll('loading'); //关闭loading
+          if(res.code == 200){
+              $(this.item).prev("div").children("input").val(res.data.url);
+          }
+          layer.msg(res.message);
+        }
+    });
+
+    //上传图片
+    upload.render({
+        elem: '#image'
+        ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+        ,multiple: true //可同时选择多个图片
+        ,before: function(obj){ //上传前的回调
+          layer.load(1); //添加loading
+        }
+        ,done: function(res){
+          layer.closeAll('loading'); //关闭loading
+          if(res.code == 200){
+              $('#imageList').append(`<li style="position:relative;margin:5px;display:inline-block;"> 
+                                        <img src="${setter.ip + res.data.url}" data-image="${res.data.url}" width="92px" height="92px"> 
+                                        <div class="img_close" onclick="this.parentNode.parentNode.removeChild(this.parentNode);">X</div>
+                                      </li>`);
+          }
+          layer.msg(res.message);
+        }
+    });
+
+    //上传视频
+    upload.render({
+        elem: '#video'
+        ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+        ,accept: 'video' //允许上传的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+        //,exts: '' //允许上传的文件后缀。一般结合 accept 参数类设定
+        ,method: 'post'  //设定HTTP类型，默认post
+        ,acceptMime: 'video/mp4,video/mpeg' //规定打开文件选择框时，筛选出的文件类型
+        ,field: 'file' //设定文件域的字段名，默认file
+        ,before: function(obj){ //上传前的回调
+          layer.load(1); //添加loading
+        }
+        ,done: function(res){ //上传后的回调
+          layer.closeAll('loading'); //关闭loading
+          if(res.code == 200){
+              $(this.item).prev("div").children("input").val(res.data.url);
+          }
+          layer.msg(res.message);
+        }
+    });
+
+    //添加规格
+    let count = 0;
+    $('#specification').click(function(){
+        count += 1;
+        $('#specificationList table tbody').append(`<tr>
+                                                      <td><input type="text" name="specification_name" value="" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                                                      <td><div class="layui-col-md9"> <input type="text" name="specification_image" value="" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input layui-disabled" readonly="readonly"> </div><div class="layui-col-md3"> <button id="specificationImage-${count}" type="button" class="layui-btn">上传</button> </div></td>
+                                                      <td><input type="text" name="specification_price" value="" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                                                      <td><button type="button" class="layui-btn" onclick="this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);">删除</button></td>
+                                                    </tr>`);
+
+        //上传规格图片，动态生成的上传按钮只能用id方式绑定
+        upload.render({
+            elem: '#specificationImage-' + count
+            ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+            ,before: function(obj){ //上传前的回调
+              layer.load(1); //添加loading
+            }
+            ,done: function(res){
+              layer.closeAll('loading'); //关闭loading
+              $(this.item).parent().parent().find('input[name="specification_image"]').val(res.data.url);
+            }
+        })
+    });
+
+    //上传规格图片，同时绑定多个元素，并将属性设定在元素上
+    upload.render({
+        elem: '.specificationImage'
+        ,url: setter.ip + '/admin/storage/upload' //实际使用请改成服务端真实接口
+        ,before: function(obj){ //上传前的回调
+          layer.load(1); //添加loading
+        }
+        ,done: function(res){
+          layer.closeAll('loading'); //关闭loading
+          $(this.item).parent().parent().find('input[name="specification_image"]').val(res.data.url);
+        }
+    })
+
+    //添加参数
+    $('#parameter').click(function(){
+        $('#parameterList table tbody').append(`<tr>
+                                                      <td><input type="text" name="parameter_key" value="" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                                                      <td><input type="text" name="parameter_value" value="" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input"></td>
+                                                      <td><button type="button" class="layui-btn" onclick="this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);">删除</button></td>
+                                                    </tr>`);
+    });
+
+    //注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
+    layedit.set({
+        height: '200px' //设定编辑器的初始高度
+        ,uploadImage: {
+        url: setter.ip + '/admin/storage/uploadByLayEdit' //实际使用请改成服务端真实接口
+        ,type: 'post' //默认post
+        }
+    });
+    //建立编辑器
+    let detail = layedit.build('detail');
+    
+    //开启提交
+    form.on('submit(LAY-form-submit)', function(data){
+        let field = data.field; //获取提交的字段
+        field['id'] = goods.id; //追加id字段
+        field['detail'] = layedit.getContent(detail);
+        let imageList = []; //商品图片
+        $('#imageList img').each(function(){
+            let image = $(this).attr('data-image');
+            imageList.push(image);
+        });
+        if(imageList.length === 0){
+            layer.msg('请上传图片');
+            return false;
+        }
+        field['image'] = imageList.join(',');
+        let specificationList = []; //商品规格
+        $('#specificationList table tbody tr').each(function(){
+            let specification = {}; //定义一个空对象
+            if($(this).find('input[name="specification_id"]').length == 1){
+              specification['id'] = $(this).find('input[name="specification_id"]').val();
+            }
+            specification['name'] = $(this).find('input[name="specification_name"]').val();
+            specification['image'] = $(this).find('input[name="specification_image"]').val();
+            specification['price'] = $(this).find('input[name="specification_price"]').val();
+            specificationList.push(specification);
+        });
+        if(specificationList.length === 0){
+            layer.msg('请添加规格');
+            return false;
+        }
+        field['goodsSpecificationList'] = specificationList;
+
+        let parameterList = []; //商品参数
+        $('#parameterList table tbody tr').each(function(){
+            let parameter = {}; //定义一个空对象
+            if($(this).find('input[name="parameter_id"]').length == 1){
+              parameter['id'] = $(this).find('input[name="parameter_id"]').val();
+            }
+            parameter['key'] = $(this).find('input[name="parameter_key"]').val();
+            parameter['value'] = $(this).find('input[name="parameter_value"]').val();
+            parameterList.push(parameter);
+        });
+        if(parameterList.length === 0){
+            layer.msg('请添加参数');
+            return false;
+        }
+        field['goodsParameterList'] = parameterList;
+
+        //提交 Ajax 成功后，重置表单
+        admin.req({
+        url: setter.ip + '/admin/goods/edit' //实际使用请改成服务端真实接口
+        ,type: 'post'
+        ,data: field
+        ,done: function(res){
+          //获取商品信息
+          admin.req({
+              url: setter.ip + '/admin/goods/info' //实际使用请改成服务端真实接口
+              ,type: 'get'
+              ,data: {
+                id: goods.id
+              }
+              ,done: function(res){
+                //添加 localStorage
+                layui.data(setter.tableName, {
+                  key: 'goods'
+                  ,value: res.data
+                });
+              }
+          });
+          //admin.events.refresh(); //刷新当前右侧区域
+          layer.msg(res.message);
+        }
+        });
+    });
+
+});
+</script>

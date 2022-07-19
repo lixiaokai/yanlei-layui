@@ -20,6 +20,12 @@
           </div>
         </div>
         <div class="layui-inline">
+          <label class="layui-form-label">手机号</label>
+          <div class="layui-input-block">
+            <input type="text" name="mobile" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
           <label class="layui-form-label">是否启用</label>
           <div class="layui-input-block">
             <select name="is_use">
@@ -50,13 +56,15 @@
       <table id="LAY-table-id" lay-filter="LAY-table-id"></table>
 
       <script type="text/html" id="avatarTpl"> 
-        <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+        <img style="display: inline-block; width: 50%; height: 100%;" src="{{ layui.setter.ip + d.avatar }}">
       </script> 
       <script type="text/html" id="isUseTpl"> 
         <input type="checkbox" lay-skin="switch" lay-text="是|否" {{ d.is_use === 1 ? 'checked' : '' }} disabled>
       </script> 
       <script type="text/html" id="barDemo">
         <div class="layui-btn-group">
+          <button class="layui-btn layui-btn-sm" lay-event="address">地址管理</button>
+          <button class="layui-btn layui-btn-sm" lay-event="password">修改密码</button>
           <button class="layui-btn layui-btn-sm" lay-event="edit">编辑</button>
           <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
         </div>
@@ -80,6 +88,9 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     //执行重载
     table.reload('LAY-table-id', {
       where: field
+      ,page: {
+        curr: 1 //重新从第 1 页开始
+      }
     });
   });
 
@@ -88,7 +99,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     elem: '#LAY-table-id'
     ,url: setter.ip + '/admin/user/lists' //实际使用请改成服务端真实接口
     //,method: 'get' //请求类型，默认：get
-    //,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
+    ,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
     //,where: {}
     //,request: {}
     //,parseData: function(res){if(res[setter.response.statusName] == setter.response.statusCode.logout){view.exit();}} //res 即为原始返回的数据
@@ -96,13 +107,13 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 100, title: '主键'}
-      ,{field: 'nickname', title: '昵称'}
-      ,{field: 'avatar', title: '头像', width: 100, templet: '#avatarTpl'}
-      ,{field: 'email', title: '邮箱'}
-      ,{field: 'mobile', title: '电话'}
+      ,{field: 'nickname', title: '用户昵称'}
+      ,{field: 'avatar', title: '用户头像', width: 100, templet: '#avatarTpl'}
+      ,{field: 'email', title: '用户邮箱'}
+      ,{field: 'mobile', title: '用户手机号'}
       ,{field: 'is_use', title: '是否启用', templet: '#isUseTpl'}
       ,{field: 'create_time', title: '创建时间', sort: true}
-      ,{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#barDemo'}
+      ,{title: '操作', width: 300, align:'center', fixed: 'right', toolbar: '#barDemo'}
     ]]
     ,page: true
     ,limit: 10
@@ -135,6 +146,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
             //提交
             form.on('submit(LAY-form-submit)', function(data){
               let field = data.field; //获取提交的字段
+              field['birthday'] = (new Date(field['birthday'])).getTime() / 1000; //获取到的时间戳除以1000就可获得Unix时间戳
               field['id'] = obj.data.id; //追加id字段
               //提交 Ajax 成功后，关闭当前弹层并重载表格
               admin.req({
@@ -166,6 +178,36 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
           });
           layer.close(index);
         });
+    } else if(obj.event === 'password'){
+      layer.prompt({title: '请输入新密码，并确认', formType: 1}, function(password, index){
+        layer.close(index);
+        layer.prompt({title: '再次输入新密码，并确认', formType: 1}, function(confirm_password, index){
+          layer.close(index);
+          if(password === confirm_password){
+            admin.req({
+              url: setter.ip + '/admin/user/password' //实际使用请改成服务端真实接口
+              ,type: 'post'
+              ,data: {
+                id: data.id
+                ,password: password
+                ,confirm_password: confirm_password
+              }
+              ,done: function(res){
+                layer.msg(res.message);
+              }
+            });
+          } else {
+            layer.msg('两次输入密码不一致，请确认后再试');
+          }
+        });
+      });
+    } else if(obj.event === 'address'){
+      //添加 localStorage
+      layui.data(setter.tableName, {
+        key: 'user'
+        ,value: data
+      });
+      location.hash = '/address/list';
     }
   });
 
@@ -190,6 +232,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
               //开启提交
               form.on('submit(LAY-form-submit)', function(data){
                 let field = data.field; //获取提交的字段
+                field['birthday'] = (new Date(field['birthday'])).getTime() / 1000; //获取到的时间戳除以1000就可获得Unix时间戳
                 //提交 Ajax 成功后，关闭当前弹层并重载表格
                 admin.req({
                   url: setter.ip + '/admin/user/add' //实际使用请改成服务端真实接口

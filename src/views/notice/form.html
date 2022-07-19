@@ -1,0 +1,59 @@
+
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">标题</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="title" value="{{ d.params.title || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">摘要</label>
+      <div class="layui-input-block">
+        <script type="text/html" template>
+          <textarea name="abstract" lay-verify="required" placeholder="请输入" class="layui-textarea">{{ d.params.abstract || '' }}</textarea>
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+          <script type="text/html" template>
+            <textarea id="content" style="display: none;">{{ d.params.content || '' }}</textarea>
+          </script>
+        </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <div class="layui-input-inline">
+        <input type="button" lay-submit lay-filter="LAY-form-submit" value="确认" class="layui-btn">
+      </div>
+    </div>
+</div>
+  
+<script>
+layui.use(['setter', 'admin', 'form', 'upload', 'layedit'], function(setter, admin, form, upload, layedit){
+  //加载jquery
+  let $ = layui.$; 
+
+  //获取 localStorage
+  let notice = layui.data(setter.tableName).notice;
+
+  //注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
+  layedit.set({
+      height: '200px' //设定编辑器的初始高度
+      ,uploadImage: {
+          url: setter.ip + '/admin/storage/uploadByLayEdit' //实际使用请改成服务端真实接口
+          ,type: 'post' //默认post
+      }
+  });
+    
+
+  
+
+
+
+})
+</script>

@@ -44,7 +44,7 @@
     </div>
     </div>
     <div class="layui-form-item">
-    <label class="layui-form-label">电话</label>
+    <label class="layui-form-label">手机号</label>
     <div class="layui-input-inline">
         <input type="text" name="mobile" value="{{ d.mobile || '' }}" lay-verify="phone" placeholder="请输入" autocomplete="off" class="layui-input">
     </div>
@@ -56,7 +56,7 @@
     </div>
     <div class="layui-input-inline layui-btn-container" style="width: auto;">
       <button type="button" class="layui-btn layui-btn-primary" id="avatar"><i class="layui-icon">&#xe67c;</i>上传图片</button>
-      <button class="layui-btn layui-btn-primary" id="showAvatar" data-avatar="{{ d.avatar || '' }}">查看图片</button >
+      <button class="layui-btn layui-btn-primary" id="showAvatar">查看图片</button >
     </div>
     <div class="layui-form-item">
     <div class="layui-input-block">
@@ -74,7 +74,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
 
   //获取管理员信息
   admin.req({
-    url: layui.setter.ip + '/admin/admin/info' //实际使用请改成服务端真实接口
+    url: setter.ip + '/admin/admin/info' //实际使用请改成服务端真实接口
     ,type: 'get'
     ,data: {}
     ,done: function(res){
@@ -98,7 +98,11 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
             ,method: 'post'  //设定HTTP类型，默认post
             ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
             ,field: 'file' //设定文件域的字段名，默认file
+            ,before: function(obj){ //上传前的回调
+              layer.load(1); //添加loading
+            }
             ,done: function(res){ //上传后的回调
+                layer.closeAll('loading'); //关闭loading
                 if(res.code == 200){
                     $(this.item).parent().prev("div").children("input").val(res.data.url);
                 }
@@ -108,18 +112,20 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
 
         //查看头像
         $('#showAvatar').on('click', function(){
-            let src = $(this).data('avatar');
-            layer.photos({
-                photos: {
-                "title": "查看头像" //相册标题
-                ,"data": [{
-                    "src": src //原图地址
-                }]
-                }
-                ,shade: 0.01
-                ,closeBtn: 1
-                ,anim: 5
-            });
+            let avatar = $('input[name="avatar"]').val();
+            if(avatar){
+                layer.photos({
+                    photos: {
+                    "title": "查看头像" //相册标题
+                    ,"data": [{
+                        "src": setter.ip + avatar //原图地址
+                    }]
+                    }
+                    ,shade: 0.01
+                    ,closeBtn: 1
+                    ,anim: 5
+                });
+            }
         });
 
         //重置表单
@@ -135,7 +141,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'laye
     let field = data.field; //获取提交的字段
     //提交 Ajax 成功后，关闭当前弹层并重载表格
     admin.req({
-      url: layui.setter.ip + '/admin/admin/editMyProfile' //实际使用请改成服务端真实接口
+      url: setter.ip + '/admin/admin/editMyProfile' //实际使用请改成服务端真实接口
       ,type: 'post'
       ,data: field
       ,done: function(res){

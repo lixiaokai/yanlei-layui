@@ -1,0 +1,351 @@
+
+<title>打印预览</title>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-body" style="padding: 15px;">
+
+        <div id="view"></div>
+
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+    <div class="layui-form" action="" lay-filter="LAY-form-id">
+      <!--startprint-->
+
+      <style>
+        .layui-table {
+          text-align: center;
+          margin: 5px 0 50px 0 !important;
+        }
+        .layui-table td, .layui-table th {
+          padding: 7px 15px;
+          line-height: 10px;
+          border-color: #666;
+        }
+      </style>
+
+      {{#  layui.each(d, function(index, item){ }}
+
+      <table id="table_id" class="layui-table">
+        <tr>
+            <td colspan="7">订单信息</td>
+        </tr>
+        <tr>
+            <td colspan="7">
+              订单号：{{ item['order_no'] }}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              下单日期：{{ layui.admin.timestampToDateTime(item['create_time']) }}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              交货日期：{{ layui.admin.timestampToDateTime(item['delivery_time']) }}
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="8" width="5%">基<br/><br/>本<br/><br/>信<br/><br/>息</td>
+            <td>下单公司</td>
+            <td colspan="2">{{ item['company'] }}</td>
+            <td>面料选择</td>
+            <td>{{ item['fabric_choice'] }}</td>
+            <td rowspan="8">工厂计件<br/><br/>二维码粘贴处</td>
+        </tr>
+        <tr>
+            <td>客户姓名</td>
+            <td colspan="2">{{ item['customer_name'] }}</td>
+            <td>面料编号</td>
+            <td>{{ item['fabric_number'] }}</td>
+        </tr>
+        <tr>
+            <td>性别</td>
+            <td colspan="2">{{ item['sex'] == 1 ? '男' : item['sex'] == 2 ? '女' : '' }}</td>
+            <td>面料米数</td>
+            <td>{{ item['fabric_meter_number'] }}</td>
+        </tr>
+        <tr>
+            <td>身高</td>
+            <td colspan="2">{{ item['customer_height'] }}</td>
+            <td>面料花型</td>
+            <td>{{ item['fabric_pattern'] }}</td>
+        </tr>
+        <tr>
+            <td>体重</td>
+            <td colspan="2">{{ item['customer_weight'] }}</td>
+            <td colspan="2" rowspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>产品名称</td>
+            <td colspan="2">{{ item['name'] }}</td>
+        </tr>
+        <tr>
+            <td>产品数量</td>
+            <td colspan="2">{{ item['quantity'] }}</td>
+        </tr>
+        <tr>
+            <td>试衣要求</td>
+            <td colspan="2">{{ item['fitting_requirement'] }}</td>
+        </tr>
+        <tr>
+            <td colspan="7">&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="4">项目</td>
+            <td colspan="2">款式</td>
+            <td>体型特征</td>
+        </tr>
+        <tr>
+            <td rowspan="20" width="5%">量<br/><br/>体<br/><br/>信<br/><br/>息</td>
+            <td>品类</td>
+            <td colspan="2">{{ item['product_type'] }}</td>
+            <td rowspan="3">领型</td>
+            <td>{{ item['collar_shape'] }}</td>
+            <td rowspan="7">{{ item['physical_characteristic'] }}</td>
+        </tr>
+        <tr>
+            <td>版型</td>
+            <td colspan="2">{{ item['comfortable_type'] }}</td>
+            <td>{{ item['collar_bottom_shape'] }}</td>
+        </tr>
+        <tr>
+            <td>工艺</td>
+            <td colspan="2">{{ item['technology'] }}</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>量体信息</td>
+            <td colspan="2">成衣/套码</td>
+            <td rowspan="2">袖口</td>
+            <td>{{ item['cuff_shape'] }}</td>
+        </tr>
+        <tr>
+            <td>尺寸单位</td>
+            <td colspan="2">{{ item['unit_size'] }}</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>部位</td>
+            <td>净尺寸</td>
+            <td>成衣尺寸</td>
+            <td rowspan="2">门襟</td>
+            <td>{{ item['placket_style'] }}</td>
+        </tr>
+        <tr>
+            <td>领围</td>
+            <td>{{ item['neck_line']['net_size'] }}</td>
+            <td>{{ item['neck_line']['garment_size'] }}</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>肩宽</td>
+            <td>{{ item['shoulder_breadth']['net_size'] }}</td>
+            <td>{{ item['shoulder_breadth']['garment_size'] }}</td>
+            <td>止口</td>
+            <td>{{ item['front_edge_width'] }}</td>
+            <td rowspan="7"><img src="{{ item['print_picture_upload_qrcode'] }}"/></td>
+        </tr>
+        <tr>
+            <td>前衣长</td>
+            <td>{{ item['before_clothes_length']['net_size'] }}</td>
+            <td>{{ item['before_clothes_length']['garment_size'] }}</td>
+            <td>胸袋</td>
+            <td>{{ item['breast_pocket_shape'] }}</td>
+        </tr>
+        <tr>
+            <td>后衣长</td>
+            <td>{{ item['after_clothes_length']['net_size'] }}</td>
+            <td>{{ item['after_clothes_length']['garment_size'] }}</td>
+            <td>后片</td>
+            <td>{{ item['posterior_lamina_shape'] }}</td>
+        </tr>
+        <tr>
+            <td>胸围</td>
+            <td>{{ item['chest_circumference']['net_size'] }}</td>
+            <td>{{ item['chest_circumference']['garment_size'] }}</td>
+            <td>下摆</td>
+            <td>{{ item['lower_hem_shape'] }}</td>
+        </tr>
+        <tr>
+            <td>中腰</td>
+            <td>{{ item['waistline']['net_size'] }}</td>
+            <td>{{ item['waistline']['garment_size'] }}</td>
+            <td>商标</td>
+            <td>{{ item['logo_position'] }}</td>
+        </tr>
+        <tr>
+            <td>下摆</td>
+            <td>{{ item['lower_hem']['net_size'] }}</td>
+            <td>{{ item['lower_hem']['garment_size'] }}</td>
+            <td>尺码</td>
+            <td>{{ item['size_label'] }}</td>
+        </tr>
+        <tr>
+            <td>袖长</td>
+            <td>{{ item['sleeve_length']['net_size'] }}</td>
+            <td>{{ item['sleeve_length']['garment_size'] }}</td>
+            <td>料标</td>
+            <td>{{ item['adatfelirat_position'] }}</td>
+        </tr>
+        <tr>
+            <td>袖肥</td>
+            <td>{{ item['sleeve_width']['net_size'] }}</td>
+            <td>{{ item['sleeve_width']['garment_size'] }}</td>
+            <td>洗标</td>
+            <td>{{ item['care_label_position'] }}</td>
+            <td rowspan="8">小布样<br/><br/>粘贴处</td>
+        </tr>
+        <tr>
+            <td>袖口</td>
+            <td>{{ item['sleeve_open']['net_size'] }}</td>
+            <td>{{ item['sleeve_open']['garment_size'] }}</td>
+            <td>绣花位置</td>
+            <td>{{ item['embroider_position'] }}</td>
+        </tr>
+        <tr>
+            <td>前胸</td>
+            <td>{{ item['forebreast']['net_size'] }}</td>
+            <td>{{ item['forebreast']['garment_size'] }}</td>
+            <td>绣花内容</td>
+            <td>{{ item['embroider_content'] }}</td>
+        </tr>
+        <tr>
+            <td>后背</td>
+            <td>{{ item['back']['net_size'] }}</td>
+            <td>{{ item['back']['garment_size'] }}</td>
+            <td>绣花字体</td>
+            <td>{{ item['embroider_font'] }}</td>
+        </tr>
+        <tr>
+            <td>肚围</td>
+            <td>{{ item['abdomen_circumference']['net_size'] }}</td>
+            <td>{{ item['abdomen_circumference']['garment_size'] }}</td>
+            <td>绣花颜色</td>
+            <td>{{ item['embroider_color'] }}</td>
+        </tr>
+        <tr>
+            <td>肚高</td>
+            <td>{{ item['abdomen_high']['net_size'] }}</td>
+            <td>{{ item['abdomen_high']['garment_size'] }}</td>
+            <td>纽扣</td>
+            <td>{{ item['button'] }}</td>
+        </tr>
+        <tr>
+            <td rowspan="4" width="5%">女<br/><br/>式<br/><br/>信<br/><br/>息</td>
+            <td>胸高</td>
+            <td>{{ item['chest_height']['net_size'] }}</td>
+            <td>{{ item['chest_height']['garment_size'] }}</td>
+            <td>锁眼要求</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>胸距</td>
+            <td>{{ item['chest_apart']['net_size'] }}</td>
+            <td>{{ item['chest_apart']['garment_size'] }}</td>
+            <td>是否留版</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>前腰节</td>
+            <td>{{ item['front_waist_length']['net_size'] }}</td>
+            <td>{{ item['front_waist_length']['garment_size'] }}</td>
+            <td>留版位置</td>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>后腰节</td>
+            <td>{{ item['nape_waist_length']['net_size'] }}</td>
+            <td>{{ item['nape_waist_length']['garment_size'] }}</td>
+            <td rowspan="2">其他<br/><br/>备注</td>
+            <td colspan="2" rowspan="2">{{ item['other_note'] }}</td>
+        </tr>
+        <tr>
+            <td width="5%">备<br/><br/>注</td>
+            <td colspan="3">{{ item['remark'] }}</td>
+        </tr>
+        <tr>
+            <td colspan="7">
+              制版：
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              裁剪：
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              缝制：
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              锁眼：
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              钉扣：
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              检验：
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              整烫：
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              发货：
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7">
+              打印时间：{{ layui.admin.timestampToDateTime(item['print_time']) }}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              审单：{{ item['print_administrator'] }}
+            </td>
+        </tr>
+      </table>
+
+      {{#  }); }}
+
+      <!--endprint-->
+
+      <div class="layui-main"><button id="print" class="layui-btn layui-main">打印</button></div>
+
+    </div>
+</script>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'layedit'], function(setter, admin, view, table, form, laytpl, upload, layedit){
+    //加载jquery
+    let $ = layui.$;
+
+    //获取 路由参数
+    let router = layui.router();
+
+    //获取打印数据
+    admin.req({
+        url: setter.ip + '/admin/order/printPreview' //实际使用请改成服务端真实接口
+        ,type: 'get'
+        ,data: {id: router.search.id}
+        ,done: function(res){
+            //获取模版
+            let getTpl = tpl.innerHTML;
+            //把数据放进模版里
+            laytpl(getTpl).render(res.data, function(html) {
+                //把模版放进视图里
+                $('#view').html(html);
+            });
+            //打印预览
+            $('#print').on('click', function() {
+              let bdhtml=window.document.body.innerHTML;//获取当前页的html代码
+              let sprnstr="<!--startprint-->";//设置打印开始区域
+              let eprnstr="<!--endprint-->";//设置打印结束区域
+              let prnhtml=bdhtml.substring(bdhtml.indexOf(sprnstr)+17); //从开始代码向后取html
+              prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));//从结束代码向前取html
+              //写入拼凑内容
+              window.document.body.innerHTML=prnhtml;
+              window.print();
+              //window.document.body.innerHTML=bdhtml;//还原当前页面
+            });
+            //layer.msg(res.message);
+        }
+    });
+    
+
+    //打印预览
+    //admin.printPreview();
+    
+    
+
+
+
+
+    
+
+
+});
+</script>

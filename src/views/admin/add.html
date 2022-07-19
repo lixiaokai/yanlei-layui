@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="layui-form-item">
-      <label class="layui-form-label">电话</label>
+      <label class="layui-form-label">手机号</label>
       <div class="layui-input-inline">
           <input type="text" name="mobile" value="" lay-verify="phone" placeholder="请输入" autocomplete="off" class="layui-input">
       </div>
@@ -47,7 +47,7 @@
       <label class="layui-form-label">是否启用</label>
       <div class="layui-input-inline">
           <input type="radio" name="is_use" value="1" title="是">
-          <input type="radio" name="is_use" value="2" title="否">
+          <input type="radio" name="is_use" value="2" title="否" checked>
       </div>
     </div>
     <div class="layui-form-item">
@@ -73,7 +73,7 @@
               $('#role').append(`<input type="checkbox" name="role[]" value="${index}" lay-skin="primary" title="${item}">`);
             });
             form.render('checkbox', 'LAY-form-id'); //更新checkbox选择框渲染
-            layer.msg(res.message);
+            //layer.msg(res.message);
         }
     });
     
@@ -86,8 +86,11 @@
       ,method: 'post'  //设定HTTP类型，默认post
       ,acceptMime: 'image/*' //规定打开文件选择框时，筛选出的文件类型
       ,field: 'file' //设定文件域的字段名，默认file
+      ,before: function(obj){ //上传前的回调
+        layer.load(1); //添加loading
+      }
       ,done: function(res){ //上传后的回调
-        //debugger
+        layer.closeAll('loading'); //关闭loading
         if(res.code == 200){
           $(this.item).prev("div").children("input").val(res.data.url);
         }
@@ -97,15 +100,14 @@
 
     //放大图片
     // $("input[name='avatar']").click(function(){
-    //     let imgSrc = $(this).attr('value');
-    //     debugger
-    //     if(imgSrc){
+    //     let avatar = $(this).val();
+    //     if(avatar){
     //         layer.open({
     //             type:1
     //             ,title:false
     //             ,closeBtn:0
     //             ,shadeClose:true
-    //             ,content:'<img alt="图片" src="' + imgSrc + '"/>'
+    //             ,content:'<img alt="图片" src="' + setter.ip + avatar + '"/>'
     //             ,scrollbar:false
     //         });
     //     }

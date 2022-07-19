@@ -64,6 +64,9 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     //执行重载
     table.reload('LAY-table-id', {
       where: field
+      ,page: {
+        curr: 1 //重新从第 1 页开始
+      }
     });
   });
 
@@ -72,7 +75,7 @@ layui.use(['setter', 'admin', 'view', 'table', 'form'], function(setter, admin, 
     elem: '#LAY-table-id'
     ,url: setter.ip + '/admin/region/lists' //实际使用请改成服务端真实接口
     //,method: 'get' //请求类型，默认：get
-    //,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
+    ,headers: {Authorization: layui.data(setter.tableName)[setter.request.tokenName]} //请求头
     //,where: {}
     //,request: {}
     //,parseData: function(res){if(res[setter.response.statusName] == setter.response.statusCode.logout){view.exit();}} //res 即为原始返回的数据

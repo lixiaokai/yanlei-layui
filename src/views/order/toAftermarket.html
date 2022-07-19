@@ -1,0 +1,75 @@
+
+<div class="layui-form" lay-filter="LAY-form-id" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">售后编号</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="text" value="{{ d.params.aftermarket.aftermarket_no || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+            </script>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品状态</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="text" value="{{ d.params.aftermarket.goods_status || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+            </script>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">退款原因</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="text" value="{{ d.params.aftermarket.refund_reason || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+            </script>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">退款备注</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="text" value="{{ d.params.aftermarket.refund_remark || '' }}" class="layui-input layui-disabled" readonly="readonly" style="border: none;">
+            </script>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="radio" name="status" value="1" title="通过" {{ d.params.aftermarket.status === 1 ? 'checked' : '' }}>
+                <input type="radio" name="status" value="2" title="驳回" {{ d.params.aftermarket.status === 2 ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">驳回原因</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <textarea name="reject_reason" class="layui-textarea">{{ d.params.aftermarket.reject_reason || '' }}</textarea>
+            </script>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <input type="hidden" name="id" value="{{ d.params.aftermarket.id }}">
+            </script>
+            <input type="button" lay-submit lay-filter="LAY-form-submit" value="确认" class="layui-btn">
+        </div>
+    </div>
+</div>
+  
+<script>
+layui.use(['setter', 'admin', 'form'], function(setter, admin, form){
+    //加载jquery
+    let $ = layui.$; 
+
+    //获取 localStorage
+    let order = layui.data(setter.tableName).order;
+
+    //更新渲染
+    form.render(null, 'LAY-form-id');
+
+})
+</script>

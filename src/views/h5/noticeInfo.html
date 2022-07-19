@@ -1,0 +1,66 @@
+
+<title>H5</title>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-body" style="padding: 15px;">
+
+        <div id="view"></div>
+
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+    <div class="layui-form" action="" lay-filter="LAY-form-id">
+      
+    {{ d.content || '' }}
+
+    </div>
+</script>
+
+<script>
+layui.use(['setter', 'admin', 'view', 'table', 'form', 'laytpl', 'upload', 'layedit'], function(setter, admin, view, table, form, laytpl, upload, layedit){
+    //加载jquery
+    let $ = layui.$;
+
+    //获取 路由参数
+    let router = layui.router();
+    
+    if(router.search.id == undefined || router.search.id == ''){
+        layer.msg('参数不存在');
+        return false;
+    }
+
+    //获取公告信息数据
+    admin.req({
+        url: setter.ip + '/admin/h5/noticeInfo' //实际使用请改成服务端真实接口
+        ,type: 'get'
+        ,data: {id: router.search.id}
+        ,done: function(res){
+            //使富文本的内容适配移动端
+            res.data.content && (res.data.content = res.data.content.replace(/\<img/gi, '<img style="width: 100%"'));
+            //获取模版
+            let getTpl = tpl.innerHTML;
+            //把数据放进模版里
+            laytpl(getTpl).render(res.data, function(html) {
+                //把模版放进视图里
+                $('#view').html(html);
+            });
+            //layer.msg(res.message);
+        }
+    });
+
+    //更新渲染
+    form.render(null, 'LAY-form-id');
+    
+    
+
+
+
+
+    
+
+
+});
+</script>
